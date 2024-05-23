@@ -22,14 +22,9 @@ import java.util.Collections;
 
 public class CameraStateCallback extends CameraDevice.StateCallback {
 
-    private ICameraManager iCameraManager;
-
-    public CameraStateCallback(ICameraManager iCameraManage) {
-        this.iCameraManager = iCameraManage;
-    }
-
     @Override
     public void onOpened(@NonNull CameraDevice camera) {
+        ICameraManager iCameraManager = ICameraManager.getInstance();
         iCameraManager.setCameraDevice(camera);
 
         try {
@@ -38,7 +33,7 @@ public class CameraStateCallback extends CameraDevice.StateCallback {
             captureRequestBuilder.addTarget(iCameraManager.getImageReader().getSurface());
             iCameraManager.setCaptureRequestBuilder(captureRequestBuilder);
 
-            SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.executor, new CameraCaptureStateCallback(iCameraManager));
+            SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.executor, new CameraCaptureStateCallback());
             camera.createCaptureSession(sessionConfiguration);
         } catch (CameraAccessException e) {
             throw new RuntimeException("camera access exception");

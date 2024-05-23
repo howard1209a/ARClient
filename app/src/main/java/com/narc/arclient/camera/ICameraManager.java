@@ -32,6 +32,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.narc.arclient.MainActivity;
 import com.narc.arclient.R;
 import com.narc.arclient.camera.callback.CameraImageAvailableListener;
 import com.narc.arclient.camera.callback.CameraStateCallback;
@@ -44,36 +45,36 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class ICameraManager {
+    private static volatile ICameraManager iCameraManager;
 
-    private AppCompatActivity mainActivity;
+    private MainActivity mainActivity;
 
     private CameraDevice cameraDevice;
     private CaptureRequest.Builder captureRequestBuilder;
     private ImageReader imageReader;
 
-    public ICameraManager(AppCompatActivity mainActivity) {
+    private ICameraManager(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
-    public void init() {
-        if (checkCameraPermission()) {
-            openCamera();
-        }
+    public static void init(MainActivity mainActivity) {
+        iCameraManager = new ICameraManager(mainActivity);
 
+        iCameraManager.checkCameraPermission();
     }
 
-    private boolean checkCameraPermission() {
+    private void checkCameraPermission() {
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            return true;
+            openCamera();
         } else {
             ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.CAMERA}, CameraEnums.CAMERA_PERMISSION_REQUEST_CODE);
-            return false;
         }
     }
 
     private void openCamera() {
         CameraManager cameraManager = (CameraManager) mainActivity.getSystemService(CAMERA_SERVICE);
         String cameraId;
+
         try {
             cameraId = cameraManager.getCameraIdList()[0];
             if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -89,10 +90,11 @@ public class ICameraManager {
                 height = jpegSizes[0].getHeight();
             }
             imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-            // Handler设置为null意味着CameraImageAvailableListener的回调在UI线程执行，需要异步
-            imageReader.setOnImageAvailableListener(new CameraImageAvailableListener(this), null);
 
-            cameraManager.openCamera(cameraId, ProcessorManager.executor, new CameraStateCallback(this));
+            // Handler设置为null意味着CameraImageAvailableListener的回调在UI线程执行，需要异步
+            imageReader.setOnImageAvailableListener(new CameraImageAvailableListener(), null);
+
+            cameraManager.openCamera(cameraId, ProcessorManager.executor, new CameraStateCallback());
         } catch (CameraAccessException e) {
             throw new RuntimeException("can not access camera");
         }
@@ -128,7 +130,7 @@ public class ICameraManager {
         return mainActivity;
     }
 
-    public void setMainActivity(AppCompatActivity mainActivity) {
+    public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
@@ -138,5 +140,9 @@ public class ICameraManager {
 
     public void setImageReader(ImageReader imageReader) {
         this.imageReader = imageReader;
+    }
+
+    public static ICameraManager getInstance() {
+        return iCameraManager;
     }
 }

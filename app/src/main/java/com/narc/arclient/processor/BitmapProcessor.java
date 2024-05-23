@@ -7,9 +7,15 @@ import android.media.Image;
 
 import java.nio.ByteBuffer;
 
-public class BitmapProcessor implements Processor<Image, Bitmap> {
+public class BitmapProcessor implements Processor<ProcessorManager.RecognizeTask, ProcessorManager.RecognizeTask> {
+    private static final BitmapProcessor BITMAP_PROCESSOR = new BitmapProcessor();
+
+    private BitmapProcessor() {
+    }
+
     @Override
-    public Bitmap process(Image image) {
+    public ProcessorManager.RecognizeTask process(ProcessorManager.RecognizeTask recognizeTask) {
+        Image image = recognizeTask.getImage();
         Image.Plane[] planes = image.getPlanes();
         ByteBuffer buffer = planes[0].getBuffer();
         int width = image.getWidth();
@@ -18,6 +24,12 @@ public class BitmapProcessor implements Processor<Image, Bitmap> {
         buffer.get(bytes);
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        return Bitmap.createBitmap(bitmap, 0, 0, width, height);
+        recognizeTask.setOriginBitmap(Bitmap.createBitmap(bitmap, 0, 0, width, height));
+
+        return recognizeTask;
+    }
+
+    public static Processor<ProcessorManager.RecognizeTask, ProcessorManager.RecognizeTask> getInstance() {
+        return BITMAP_PROCESSOR;
     }
 }

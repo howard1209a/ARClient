@@ -18,11 +18,6 @@ import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
 
 public class CameraCaptureCallback extends CameraCaptureSession.CaptureCallback {
-    private ICameraManager iCameraManager;
-
-    public CameraCaptureCallback(ICameraManager iCameraManager) {
-        this.iCameraManager = iCameraManager;
-    }
 
     @Override
     public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {

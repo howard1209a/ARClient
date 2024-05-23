@@ -1,5 +1,6 @@
 package com.narc.arclient;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
 import static com.narc.arclient.enums.CameraEnums.CAMERA_PERMISSION_REQUEST_CODE;
 
 import android.Manifest;
@@ -26,6 +27,7 @@ import androidx.core.content.ContextCompat;
 
 import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
+import com.narc.arclient.processor.RecognizeProcessor;
 
 import java.util.Arrays;
 
@@ -40,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         imgTextureView = findViewById(R.id.imgTextureView);
 
-        iCameraManager = new ICameraManager(this);
-        iCameraManager.init();
+        RecognizeProcessor.init(this);
+        ICameraManager.init(this);
     }
 
     @Override
