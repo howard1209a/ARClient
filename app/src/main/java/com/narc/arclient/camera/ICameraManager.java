@@ -89,6 +89,7 @@ public class ICameraManager {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
             }
+            // todo 这里maxImages设置还需要再考虑一下
             imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
 
             // Handler设置为null意味着CameraImageAvailableListener的回调在UI线程执行，需要异步

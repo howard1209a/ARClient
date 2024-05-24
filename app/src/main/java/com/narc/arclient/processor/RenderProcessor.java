@@ -37,9 +37,6 @@ public class RenderProcessor implements Processor<ProcessorManager.RecognizeTask
             imgTextureView.unlockCanvasAndPost(canvas);
         }
 
-        // Image底层是ByteBuffer存的，ByteBuffer是元空间的直接内存，需要手动free
-        recognizeTask.getImage().close();
-
         return recognizeTask;
     }
 

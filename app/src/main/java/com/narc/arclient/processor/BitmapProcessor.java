@@ -26,6 +26,9 @@ public class BitmapProcessor implements Processor<ProcessorManager.RecognizeTask
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         recognizeTask.setOriginBitmap(Bitmap.createBitmap(bitmap, 0, 0, width, height));
 
+        // Image底层是ByteBuffer存的，ByteBuffer是元空间的直接内存，需要手动free。这里image信息已经写入堆区byte[]，可以及时free
+        image.close();
+
         return recognizeTask;
     }
 
