@@ -131,6 +131,7 @@ public class ICameraManager {
         return mainActivity;
     }
 
+    // 1
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
