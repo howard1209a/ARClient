@@ -90,12 +90,12 @@ public class ICameraManager {
                 height = jpegSizes[0].getHeight();
             }
             // todo 这里maxImages设置还需要再考虑一下
-            imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+            imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 5);
 
             // Handler设置为null意味着CameraImageAvailableListener的回调在UI线程执行，需要异步
             imageReader.setOnImageAvailableListener(new CameraImageAvailableListener(), null);
 
-            cameraManager.openCamera(cameraId, ProcessorManager.executor, new CameraStateCallback());
+            cameraManager.openCamera(cameraId, ProcessorManager.normalExecutor, new CameraStateCallback());
         } catch (CameraAccessException e) {
             throw new RuntimeException("can not access camera");
         }

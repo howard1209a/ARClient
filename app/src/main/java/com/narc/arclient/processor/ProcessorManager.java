@@ -1,7 +1,12 @@
 package com.narc.arclient.processor;
 
+import static android.content.ContentValues.TAG;
+
+import static com.narc.arclient.enums.ProcessorEnums.MONITOR_FREQUENCY;
+
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.util.Log;
 
 import com.google.mediapipe.framework.image.MPImage;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
@@ -15,58 +20,62 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ProcessorManager {
-    public static final ExecutorService executor = new ThreadPoolExecutor(2, 3, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    public static final ThreadPoolExecutor normalExecutor = new ThreadPoolExecutor(3, 10, 20, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    public static final ThreadPoolExecutor imageCopyExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
     public static final ScheduledExecutorService scheduledExecutor = new ScheduledThreadPoolExecutor(1);
 
-    public static class RecognizeTask {
-        private Image image;
-        private Bitmap originBitmap;
-        private MPImage mpImage;
-        private GestureRecognizerResult gestureRecognizerResult;
-        private Bitmap renderedBitmap;
+    private static final ProcessorManager PROCESSOR_MANAGER = new ProcessorManager();
 
-        public RecognizeTask(Image image) {
-            this.image = image;
+    private Monitor monitor;
+
+    private class Monitor implements Runnable {
+        private Monitor() {
+            startMonitor();
         }
 
-        public Bitmap getOriginBitmap() {
-            return originBitmap;
+        private void startMonitor() {
+            int monitorPeriod = 1000 / MONITOR_FREQUENCY;
+            scheduledExecutor.scheduleWithFixedDelay(this, monitorPeriod, monitorPeriod, TimeUnit.MILLISECONDS);
         }
 
-        public void setOriginBitmap(Bitmap originBitmap) {
-            this.originBitmap = originBitmap;
+        @Override
+        public void run() {
+            monitorSystemResources();
+            monitorThreadPool();
         }
 
-        public MPImage getMpImage() {
-            return mpImage;
+        private void monitorThreadPool() {
+            int normalExecutorQueueSize = normalExecutor.getQueue().size();
+            int imageCopyExecutorQueueSize = imageCopyExecutor.getQueue().size();
+            Log.d(TAG, String.format("normalExecutor queue size: %d imageCopyExecutor queue size: %d", normalExecutorQueueSize, imageCopyExecutorQueueSize));
         }
 
-        public void setMpImage(MPImage mpImage) {
-            this.mpImage = mpImage;
+        private void monitorSystemResources() {
+            try {
+                String[] cmd = {
+                        "/system/bin/top", "-n", "1"
+                };
+                Process process = Runtime.getRuntime().exec(cmd);
+                java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("com.narc")) {
+                        String[] parts = line.split("\\s+");
+                        Log.d(TAG, String.format("CPU usage: %.2f MEM usage: %.2f", Double.parseDouble(parts[9]), Double.parseDouble(parts[10])));
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting CPU usage and MEM usage", e);
+            }
         }
+    }
 
-        public GestureRecognizerResult getGestureRecognizerResult() {
-            return gestureRecognizerResult;
-        }
+    private ProcessorManager() {
+        this.monitor = new Monitor();
+    }
 
-        public void setGestureRecognizerResult(GestureRecognizerResult gestureRecognizerResult) {
-            this.gestureRecognizerResult = gestureRecognizerResult;
-        }
-
-        public Bitmap getRenderedBitmap() {
-            return renderedBitmap;
-        }
-
-        public void setRenderedBitmap(Bitmap renderedBitmap) {
-            this.renderedBitmap = renderedBitmap;
-        }
-
-        public Image getImage() {
-            return image;
-        }
-
-        public void setImage(Image image) {
-            this.image = image;
-        }
+    public static ProcessorManager getInstance() {
+        return PROCESSOR_MANAGER;
     }
 }

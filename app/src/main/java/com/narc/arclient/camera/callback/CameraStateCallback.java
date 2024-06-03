@@ -33,7 +33,7 @@ public class CameraStateCallback extends CameraDevice.StateCallback {
             captureRequestBuilder.addTarget(iCameraManager.getImageReader().getSurface());
             iCameraManager.setCaptureRequestBuilder(captureRequestBuilder);
 
-            SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.executor, new CameraCaptureStateCallback());
+            SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.normalExecutor, new CameraCaptureStateCallback());
             camera.createCaptureSession(sessionConfiguration);
         } catch (CameraAccessException e) {
             throw new RuntimeException("camera access exception");
