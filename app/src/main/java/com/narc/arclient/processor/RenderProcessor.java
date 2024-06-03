@@ -43,6 +43,7 @@ public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> 
 
         recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
 
+        // 打印本次任务各部分耗时
         recognizeTask.timeConsumeLog();
 
         return recognizeTask;

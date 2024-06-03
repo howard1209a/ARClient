@@ -23,38 +23,6 @@ public class RecognizeTask {
         private long preprocessTime;
         private long recognizeTime;
         private long renderTime;
-
-        public long getCopyTime() {
-            return copyTime;
-        }
-
-        public void setCopyTime(long copyTime) {
-            this.copyTime = copyTime;
-        }
-
-        public long getPreprocessTime() {
-            return preprocessTime;
-        }
-
-        public void setPreprocessTime(long preprocessTime) {
-            this.preprocessTime = preprocessTime;
-        }
-
-        public long getRecognizeTime() {
-            return recognizeTime;
-        }
-
-        public void setRecognizeTime(long recognizeTime) {
-            this.recognizeTime = recognizeTime;
-        }
-
-        public long getRenderTime() {
-            return renderTime;
-        }
-
-        public void setRenderTime(long renderTime) {
-            this.renderTime = renderTime;
-        }
     }
 
 
@@ -125,17 +93,5 @@ public class RecognizeTask {
 
     public Image getImage() {
         return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public TimeConsumer getTimeConsumer() {
-        return timeConsumer;
-    }
-
-    public void setTimeConsumer(TimeConsumer timeConsumer) {
-        this.timeConsumer = timeConsumer;
     }
 }

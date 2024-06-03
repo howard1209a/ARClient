@@ -1,5 +1,7 @@
 package com.narc.arclient.processor;
 
+import static com.narc.arclient.enums.ProcessorEnums.SCALE_FACTOR;
+
 import android.graphics.Bitmap;
 
 import com.google.mediapipe.framework.image.BitmapImageBuilder;
@@ -18,7 +20,7 @@ public class PreHandleProcessor implements Processor<RecognizeTask, RecognizeTas
         recognizeTask.recordTimeConsumeStart(TaskType.PREPROCESS);
 
         Bitmap originBitmap = recognizeTask.getOriginBitmap();
-        originBitmap = scaleBitmap(originBitmap, 0.4f);
+        originBitmap = scaleBitmap(originBitmap, SCALE_FACTOR);
         recognizeTask.setMpImage(new BitmapImageBuilder(originBitmap).build());
 
         recognizeTask.recordTimeConsumeEnd(TaskType.PREPROCESS);
@@ -26,9 +28,6 @@ public class PreHandleProcessor implements Processor<RecognizeTask, RecognizeTas
     }
 
     public static Bitmap scaleBitmap(Bitmap originalBitmap, float scale) {
-        if (originalBitmap == null) {
-            throw new IllegalArgumentException("Original bitmap cannot be null");
-        }
 
         int width = originalBitmap.getWidth();
         int height = originalBitmap.getHeight();

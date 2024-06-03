@@ -26,7 +26,6 @@ public class CameraCaptureStateCallback extends CameraCaptureSession.StateCallba
         ProcessorManager.scheduledExecutor.schedule(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "captureSingleRequest");
                 try {
                     session.captureSingleRequest(ICameraManager.getInstance().getCaptureRequestBuilder().build(), ProcessorManager.normalExecutor, new CameraCaptureCallback());
                 } catch (CameraAccessException e) {
@@ -39,6 +38,6 @@ public class CameraCaptureStateCallback extends CameraCaptureSession.StateCallba
 
     @Override
     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-        throw new RuntimeException("camera capture configure fail");
+        Log.e(TAG, "camera capture configure fail");
     }
 }

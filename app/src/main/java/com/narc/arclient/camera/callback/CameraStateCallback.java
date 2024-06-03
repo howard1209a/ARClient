@@ -38,20 +38,18 @@ public class CameraStateCallback extends CameraDevice.StateCallback {
             SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.normalExecutor, new CameraCaptureStateCallback());
             camera.createCaptureSession(sessionConfiguration);
         } catch (CameraAccessException e) {
-            throw new RuntimeException("camera access exception");
+            Log.e(TAG, e.toString());
         }
     }
 
 
     @Override
     public void onDisconnected(@NonNull CameraDevice camera) {
-        Log.e(TAG, "onDisconnected");
+        Log.e(TAG, "camera disconnected");
     }
 
     @Override
     public void onError(@NonNull CameraDevice camera, int error) {
         Log.e(TAG, "camera error");
-        camera.close();
-        ICameraManager.getInstance().checkCameraPermission();
     }
 }

@@ -27,13 +27,10 @@ public class RecognizeProcessor implements Processor<RecognizeTask, RecognizeTas
     private static volatile RecognizeProcessor recognizeProcessor;
     private final MainActivity mainActivity;
     private GestureRecognizer recognizer;
-    private final ReentrantReadWriteLock recognizerLock;
 
     private RecognizeProcessor(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         setUpGestureRecognizer();
-        this.recognizerLock = new ReentrantReadWriteLock();
-        // timelyUpdateRecognizer();
     }
 
     private void setUpGestureRecognizer() {
@@ -52,33 +49,12 @@ public class RecognizeProcessor implements Processor<RecognizeTask, RecognizeTas
         this.recognizer = GestureRecognizer.createFromOptions(mainActivity, options);
     }
 
-    private void timelyUpdateRecognizer() {
-        ProcessorManager.scheduledExecutor.scheduleWithFixedDelay(() -> {
-//            Intent intent = mainActivity.getBaseContext().getPackageManager()
-//                    .getLaunchIntentForPackage(mainActivity.getBaseContext().getPackageName());
-//            PendingIntent pendingIntent = PendingIntent.getActivity(mainActivity.getBaseContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-//            AlarmManager alarmManager = (AlarmManager) mainActivity.getBaseContext().getSystemService(Context.ALARM_SERVICE);
-//            alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, pendingIntent);
-//            System.exit(0);
-
-            ReentrantReadWriteLock.WriteLock writeLock = recognizerLock.writeLock();
-            writeLock.lock();
-            recognizer.close();
-            setUpGestureRecognizer();
-            writeLock.unlock();
-        }, 5, 5, TimeUnit.SECONDS);
-    }
-
     @Override
     public RecognizeTask process(RecognizeTask recognizeTask) {
         recognizeTask.recordTimeConsumeStart(TaskType.RECOGNIZE);
 
         MPImage mpImage = recognizeTask.getMpImage();
-        ReentrantReadWriteLock.ReadLock readLock = recognizerLock.readLock();
-        // protect
-        readLock.lock();
         GestureRecognizerResult gestureRecognizerResult = recognizer.recognize(mpImage);
-        readLock.unlock();
         recognizeTask.setGestureRecognizerResult(gestureRecognizerResult);
 
         recognizeTask.recordTimeConsumeEnd(TaskType.RECOGNIZE);

@@ -1,7 +1,5 @@
 package com.narc.arclient.processor;
 
-import static com.narc.arclient.camera.callback.CameraImageAvailableListener.count;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.TotalCaptureResult;
@@ -32,7 +30,6 @@ public class BitmapProcessor implements Processor<RecognizeTask, RecognizeTask> 
 
         // Image底层是ByteBuffer存的，ByteBuffer是元空间的直接内存，需要手动free。这里image信息已经写入堆区byte[]，可以及时free
         image.close();
-        count.decrementAndGet();
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         recognizeTask.setOriginBitmap(Bitmap.createBitmap(bitmap, 0, 0, width, height));

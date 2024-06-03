@@ -14,18 +14,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CameraImageAvailableListener implements ImageReader.OnImageAvailableListener {
-    public static AtomicInteger count = new AtomicInteger(0);
 
     @Override
     public void onImageAvailable(ImageReader reader) {
-        System.out.println(count.get());
         Image image;
         try {
             image = reader.acquireLatestImage();
         } catch (IllegalStateException e) {
             return;
         }
-        count.incrementAndGet();
         RecognizeTask initialRecognizeTask = new RecognizeTask(image);
         CompletableFuture.supplyAsync(() -> BitmapProcessor.getInstance().process(initialRecognizeTask), ProcessorManager.imageCopyExecutor)
                 .thenApplyAsync(result -> PreHandleProcessor.getInstance().process(result), ProcessorManager.normalExecutor)

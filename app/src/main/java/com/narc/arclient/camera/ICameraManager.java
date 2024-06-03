@@ -1,5 +1,6 @@
 package com.narc.arclient.camera;
 
+import static android.content.ContentValues.TAG;
 import static android.content.Context.CAMERA_SERVICE;
 import static android.hardware.camera2.params.SessionConfiguration.SESSION_REGULAR;
 
@@ -20,10 +21,12 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.SessionConfiguration;
 import android.media.ImageReader;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
@@ -91,15 +94,15 @@ public class ICameraManager {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
             }
-            // todo 这里maxImages设置还需要再考虑一下
+            // 这里maxImages要根据ImageReader并发读的程度设置
             imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 5);
 
-            // Handler设置为null意味着CameraImageAvailableListener的回调在UI线程执行，需要异步
+            // Handler设置为UI线程，因此回调函数不要放耗时操作
             imageReader.setOnImageAvailableListener(new CameraImageAvailableListener(), new Handler(Looper.getMainLooper()));
 
             cameraManager.openCamera(cameraId, ProcessorManager.normalExecutor, new CameraStateCallback());
         } catch (CameraAccessException e) {
-            throw new RuntimeException("can not access camera");
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -108,13 +111,9 @@ public class ICameraManager {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                throw new RuntimeException("camera permission denied");
+                Log.e(TAG, "camera permission denied");
             }
         }
-    }
-
-    public CameraDevice getCameraDevice() {
-        return cameraDevice;
     }
 
     public void setCameraDevice(CameraDevice cameraDevice) {
@@ -133,16 +132,8 @@ public class ICameraManager {
         return mainActivity;
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
-    }
-
     public ImageReader getImageReader() {
         return imageReader;
-    }
-
-    public void setImageReader(ImageReader imageReader) {
-        this.imageReader = imageReader;
     }
 
     public static ICameraManager getInstance() {
