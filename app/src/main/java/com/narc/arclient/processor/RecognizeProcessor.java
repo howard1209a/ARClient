@@ -33,7 +33,7 @@ public class RecognizeProcessor implements Processor<RecognizeTask, RecognizeTas
         this.mainActivity = mainActivity;
         setUpGestureRecognizer();
         this.recognizerLock = new ReentrantReadWriteLock();
-        timelyUpdateRecognizer();
+        // timelyUpdateRecognizer();
     }
 
     private void setUpGestureRecognizer() {

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class ProcessorManager {
     public static final ThreadPoolExecutor normalExecutor = new ThreadPoolExecutor(3, 10, 20, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
     public static final ThreadPoolExecutor imageCopyExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-    public static final ScheduledExecutorService scheduledExecutor = new ScheduledThreadPoolExecutor(1);
+    public static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
 
     private static final ProcessorManager PROCESSOR_MANAGER = new ProcessorManager();
 
@@ -40,7 +40,7 @@ public class ProcessorManager {
 
         @Override
         public void run() {
-            monitorSystemResources();
+            // monitorSystemResources();
             monitorThreadPool();
         }
 
@@ -48,6 +48,14 @@ public class ProcessorManager {
             int normalExecutorQueueSize = normalExecutor.getQueue().size();
             int imageCopyExecutorQueueSize = imageCopyExecutor.getQueue().size();
             Log.d(TAG, String.format("normalExecutor queue size: %d imageCopyExecutor queue size: %d", normalExecutorQueueSize, imageCopyExecutorQueueSize));
+            Log.d(TAG, "Pool Size: " + scheduledExecutor.getPoolSize());
+            Log.d(TAG, "Active Threads: " + scheduledExecutor.getActiveCount());
+            Log.d(TAG, "Completed Tasks: " + scheduledExecutor.getCompletedTaskCount());
+            Log.d(TAG, "Task Count: " + scheduledExecutor.getTaskCount());
+            Log.d(TAG, "Queue Size: " + scheduledExecutor.getQueue().size());
+            Log.d(TAG, "isTerminating: " + scheduledExecutor.isTerminating() );
+            Log.d(TAG, "isTerminated: " + scheduledExecutor.isTerminated());
+            Log.d(TAG, "isShutdown: " + scheduledExecutor.isShutdown());
         }
 
         private void monitorSystemResources() {

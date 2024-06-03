@@ -1,5 +1,7 @@
 package com.narc.arclient.camera.callback;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.assist.AssistStructure;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
+import android.util.Log;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +24,5 @@ public class CameraCaptureCallback extends CameraCaptureSession.CaptureCallback 
 
     @Override
     public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-
     }
 }

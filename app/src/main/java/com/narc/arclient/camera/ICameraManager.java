@@ -22,6 +22,8 @@ import android.hardware.camera2.params.SessionConfiguration;
 import android.media.ImageReader;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
@@ -63,7 +65,7 @@ public class ICameraManager {
         iCameraManager.checkCameraPermission();
     }
 
-    private void checkCameraPermission() {
+    public void checkCameraPermission() {
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             openCamera();
         } else {
@@ -93,7 +95,7 @@ public class ICameraManager {
             imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 5);
 
             // Handler设置为null意味着CameraImageAvailableListener的回调在UI线程执行，需要异步
-            imageReader.setOnImageAvailableListener(new CameraImageAvailableListener(), null);
+            imageReader.setOnImageAvailableListener(new CameraImageAvailableListener(), new Handler(Looper.getMainLooper()));
 
             cameraManager.openCamera(cameraId, ProcessorManager.normalExecutor, new CameraStateCallback());
         } catch (CameraAccessException e) {

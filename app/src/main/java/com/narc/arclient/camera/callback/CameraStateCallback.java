@@ -1,5 +1,6 @@
 package com.narc.arclient.camera.callback;
 
+import static android.content.ContentValues.TAG;
 import static android.hardware.camera2.params.SessionConfiguration.SESSION_REGULAR;
 
 import android.hardware.camera2.CameraAccessException;
@@ -9,6 +10,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.SessionConfiguration;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -43,11 +45,13 @@ public class CameraStateCallback extends CameraDevice.StateCallback {
 
     @Override
     public void onDisconnected(@NonNull CameraDevice camera) {
-
+        Log.e(TAG, "onDisconnected");
     }
 
     @Override
     public void onError(@NonNull CameraDevice camera, int error) {
-
+        Log.e(TAG, "camera error");
+        camera.close();
+        ICameraManager.getInstance().checkCameraPermission();
     }
 }
