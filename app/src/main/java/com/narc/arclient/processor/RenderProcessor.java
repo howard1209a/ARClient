@@ -10,17 +10,21 @@ import com.google.mediapipe.tasks.components.containers.NormalizedLandmark;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
 import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
+import com.narc.arclient.entity.RecognizeTask;
+import com.narc.arclient.enums.TaskType;
 
 import java.util.List;
 
-public class RenderProcessor implements Processor<ProcessorManager.RecognizeTask, ProcessorManager.RecognizeTask> {
+public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> {
     private static final RenderProcessor RENDER_PROCESSOR = new RenderProcessor();
 
     private RenderProcessor() {
     }
 
     @Override
-    public ProcessorManager.RecognizeTask process(ProcessorManager.RecognizeTask recognizeTask) {
+    public RecognizeTask process(RecognizeTask recognizeTask) {
+        recognizeTask.recordTimeConsumeStart(TaskType.RENDER);
+
         Bitmap originBitmap = recognizeTask.getOriginBitmap();
         GestureRecognizerResult gestureRecognizerResult = recognizeTask.getGestureRecognizerResult();
         List<List<NormalizedLandmark>> landmarks = gestureRecognizerResult.landmarks();
@@ -36,6 +40,11 @@ public class RenderProcessor implements Processor<ProcessorManager.RecognizeTask
             canvas.drawBitmap(recognizeTask.getRenderedBitmap(), 0, 0, null);
             imgTextureView.unlockCanvasAndPost(canvas);
         }
+
+        recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
+
+        // 打印本次任务各部分耗时
+        recognizeTask.timeConsumeLog();
 
         return recognizeTask;
     }
@@ -61,7 +70,7 @@ public class RenderProcessor implements Processor<ProcessorManager.RecognizeTask
         return mutableBitmap;
     }
 
-    public static Processor<ProcessorManager.RecognizeTask, ProcessorManager.RecognizeTask> getInstance() {
+    public static Processor<RecognizeTask, RecognizeTask> getInstance() {
         return RENDER_PROCESSOR;
     }
 }

@@ -1,9 +1,15 @@
 package com.narc.arclient.processor;
 
+import static androidx.core.content.ContextCompat.getSystemService;
 import static com.narc.arclient.enums.ProcessorEnums.DEFAULT_HAND_DETECTION_CONFIDENCE;
 import static com.narc.arclient.enums.ProcessorEnums.DEFAULT_HAND_PRESENCE_CONFIDENCE;
 import static com.narc.arclient.enums.ProcessorEnums.DEFAULT_HAND_TRACKING_CONFIDENCE;
 import static com.narc.arclient.enums.ProcessorEnums.MP_RECOGNIZER_TASK;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 
 import com.google.mediapipe.framework.image.MPImage;
 import com.google.mediapipe.tasks.core.BaseOptions;
@@ -11,11 +17,16 @@ import com.google.mediapipe.tasks.vision.core.RunningMode;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizer;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
 import com.narc.arclient.MainActivity;
+import com.narc.arclient.entity.RecognizeTask;
+import com.narc.arclient.enums.TaskType;
 
-public class RecognizeProcessor implements Processor<ProcessorManager.RecognizeTask, ProcessorManager.RecognizeTask> {
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+public class RecognizeProcessor implements Processor<RecognizeTask, RecognizeTask> {
     private static volatile RecognizeProcessor recognizeProcessor;
+    private final MainActivity mainActivity;
     private GestureRecognizer recognizer;
-    private MainActivity mainActivity;
 
     private RecognizeProcessor(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -34,13 +45,19 @@ public class RecognizeProcessor implements Processor<ProcessorManager.RecognizeT
                 .setRunningMode(RunningMode.IMAGE);
 
         GestureRecognizer.GestureRecognizerOptions options = optionsBuilder.build();
-        recognizer = GestureRecognizer.createFromOptions(mainActivity, options);
+
+        this.recognizer = GestureRecognizer.createFromOptions(mainActivity, options);
     }
 
     @Override
-    public ProcessorManager.RecognizeTask process(ProcessorManager.RecognizeTask recognizeTask) {
+    public RecognizeTask process(RecognizeTask recognizeTask) {
+        recognizeTask.recordTimeConsumeStart(TaskType.RECOGNIZE);
+
         MPImage mpImage = recognizeTask.getMpImage();
-        recognizeTask.setGestureRecognizerResult(recognizer.recognize(mpImage));
+        GestureRecognizerResult gestureRecognizerResult = recognizer.recognize(mpImage);
+        recognizeTask.setGestureRecognizerResult(gestureRecognizerResult);
+
+        recognizeTask.recordTimeConsumeEnd(TaskType.RECOGNIZE);
         return recognizeTask;
     }
 
@@ -48,7 +65,7 @@ public class RecognizeProcessor implements Processor<ProcessorManager.RecognizeT
         recognizeProcessor = new RecognizeProcessor(mainActivity);
     }
 
-    public static Processor<ProcessorManager.RecognizeTask, ProcessorManager.RecognizeTask> getInstance() {
+    public static Processor<RecognizeTask, RecognizeTask> getInstance() {
         return recognizeProcessor;
     }
 }

@@ -1,5 +1,6 @@
 package com.narc.arclient.camera.callback;
 
+import static android.content.ContentValues.TAG;
 import static android.hardware.camera2.params.SessionConfiguration.SESSION_REGULAR;
 
 import android.hardware.camera2.CameraAccessException;
@@ -9,6 +10,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.SessionConfiguration;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -33,21 +35,21 @@ public class CameraStateCallback extends CameraDevice.StateCallback {
             captureRequestBuilder.addTarget(iCameraManager.getImageReader().getSurface());
             iCameraManager.setCaptureRequestBuilder(captureRequestBuilder);
 
-            SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.executor, new CameraCaptureStateCallback());
+            SessionConfiguration sessionConfiguration = new SessionConfiguration(SESSION_REGULAR, Arrays.asList(new OutputConfiguration(iCameraManager.getImageReader().getSurface())), ProcessorManager.normalExecutor, new CameraCaptureStateCallback());
             camera.createCaptureSession(sessionConfiguration);
         } catch (CameraAccessException e) {
-            throw new RuntimeException("camera access exception");
+            Log.e(TAG, e.toString());
         }
     }
 
 
     @Override
     public void onDisconnected(@NonNull CameraDevice camera) {
-
+        Log.e(TAG, "camera disconnected");
     }
 
     @Override
     public void onError(@NonNull CameraDevice camera, int error) {
-
+        Log.e(TAG, "camera error");
     }
 }
