@@ -1,24 +1,26 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.examples.helloworld";
-option java_outer_classname = "HelloWorldProto";
+option java_package = "com.narc.arclient.network";
+option java_outer_classname = "HelloProto";
 option objc_class_prefix = "HLW";
 
-package helloworld;
+package network;
 
-// The greeting service definition.
+// 定义Greeter，你可以当成类
 service Greeter {
-    // Sends a greeting
-    rpc SayHello (HelloRequest) returns (HelloReply) {}
+  // SayHello方法
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  // 定义一个SayHelloAgain方法，接受HelloRequest消息，返回HelloReply消息
+  rpc SayHelloAgain (HelloRequest) returns (HelloReply) {}
 }
 
-// The request message containing the user's name.
+// 定义请求参数，HelloRequest消息
 message HelloRequest {
-    string name = 1;
+  string name = 1;
 }
 
-// The response message containing the greetings
+// 定义响应参数，HelloReply消息
 message HelloReply {
-    string message = 1;
+  string message = 1;
 }

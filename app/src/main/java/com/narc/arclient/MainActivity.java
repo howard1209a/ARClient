@@ -58,13 +58,14 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.narc.arclient.network.GreeterGrpc;
+import com.narc.arclient.network.HelloReply;
+import com.narc.arclient.network.HelloRequest;
+
 import java.io.IOException;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.examples.helloworld.GreeterGrpc;
-import io.grpc.examples.helloworld.HelloReply;
-import io.grpc.examples.helloworld.HelloRequest;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "GrpcDemo";
 
-    private static final int PROT = 56322;
+    private static final int PROT = 50051;
     private static final String NAME = "hello world";
     private static final String HOST = "localhost";
 
@@ -80,14 +81,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "start");
-        startServer(PROT);
-        Log.d(TAG, "start server.");
+//        Log.d(TAG, "start");
+//        startServer(PROT);
+//        Log.d(TAG, "start server.");
         startClient(HOST, PROT, NAME);
         Log.d(TAG, "start client.");
     }
 
-    private void startServer(int port){
+    private void startServer(int port) {
         try {
             NettyServerBuilder.forPort(port)
                     .addService(new GreeterImpl())
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startClient(String host, int port, String name){
+    private void startClient(String host, int port, String name) {
         ManagedChannel mChannel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
