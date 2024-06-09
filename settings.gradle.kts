@@ -16,6 +16,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+//
+//        // 配置雷鸟私有Maven服务器
+//        maven {
+//            url = uri("http://172.16.46.52:9998/repository/maven-public/")
+//            isAllowInsecureProtocol = true
+//        }
     }
 }
 

@@ -25,11 +25,17 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
+
 
 dependencies {
 
@@ -40,4 +46,20 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation("com.google.mediapipe:tasks-vision:latest.release")
+
+    // 引入aar文件
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
+// 引入其他依赖项
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.3.0")
+    implementation("androidx.fragment:fragment-ktx:1.5.3")
+    implementation("androidx.activity:activity-ktx:1.3.0-alpha08")
+    implementation("androidx.recyclerview:recyclerview:1.1.0")
+
+// kotlin & coroutines
+    implementation("androidx.core:core-ktx:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+
 }
