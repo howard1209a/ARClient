@@ -53,6 +53,7 @@ package com.narc.arclient;//package com.narc.arclient;
 //    }
 //}
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -63,6 +64,9 @@ import com.narc.arclient.network.HelloReply;
 import com.narc.arclient.network.HelloRequest;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PROT = 50051;
     private static final String NAME = "hello world";
-    private static final String HOST = "localhost";
+    private static final String HOST = "10.129.242.98"; // 10.129.242.98
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 //        startServer(PROT);
 //        Log.d(TAG, "start server.");
         startClient(HOST, PROT, NAME);
+//        // 启动TCP连接测试
+//        new TcpConnectionTestTask().execute(HOST, PROT);
         Log.d(TAG, "start client.");
     }
 
@@ -109,13 +115,12 @@ public class MainActivity extends AppCompatActivity {
         stub.sayHello(message, new StreamObserver<HelloReply>() {
             @Override
             public void onNext(HelloReply value) {
-                //Log.d(TAG, "sayHello onNext.");
                 Log.d(TAG, value.getMessage());
             }
 
             @Override
             public void onError(Throwable t) {
-                Log.d(TAG, "sayHello onError.");
+                Log.d(TAG, "sayHello onError: " + t.getMessage(), t);
             }
 
             @Override
@@ -127,14 +132,42 @@ public class MainActivity extends AppCompatActivity {
 
     private class GreeterImpl extends GreeterGrpc.GreeterImplBase {
         public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
+            Log.d(TAG, "shoudao!");
             responseObserver.onNext(sayHello(request));
             responseObserver.onCompleted();
         }
 
         private HelloReply sayHello(HelloRequest request) {
+            Log.d(TAG, "shoudao!");
             return HelloReply.newBuilder()
                     .setMessage(request.getName())
                     .build();
+        }
+    }
+
+    private static class TcpConnectionTestTask extends AsyncTask<Object, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Object... params) {
+            String host = (String) params[0];
+            int port = (int) params[1];
+
+            try (Socket socket = new Socket(host, port)) {
+                Log.d(TAG, "Connected to " + host + " on port " + port);
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "Connection failed: " + e.getMessage());
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                Log.d(TAG, "TCP connection successful.");
+            } else {
+                Log.d(TAG, "TCP connection failed.");
+            }
         }
     }
 
