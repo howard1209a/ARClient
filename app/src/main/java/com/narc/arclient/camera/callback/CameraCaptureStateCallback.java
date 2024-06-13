@@ -5,17 +5,13 @@ import static com.narc.arclient.enums.CameraEnums.FPS;
 
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.narc.arclient.camera.ICameraManager;
-import com.narc.arclient.processor.ProcessorManager;
+import com.narc.arclient.process.ProcessorManager;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class CameraCaptureStateCallback extends CameraCaptureSession.StateCallback {

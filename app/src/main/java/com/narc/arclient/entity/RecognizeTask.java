@@ -8,10 +8,12 @@ import android.util.Log;
 
 import com.google.mediapipe.framework.image.MPImage;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
+import com.google.protobuf.ByteString;
 import com.narc.arclient.enums.TaskType;
 
 public class RecognizeTask {
     private Image image;
+    private byte[] originBytes;
     private Bitmap originBitmap;
     private MPImage mpImage;
     private GestureRecognizerResult gestureRecognizerResult;
@@ -57,6 +59,14 @@ public class RecognizeTask {
 
     public void timeConsumeLog() {
         Log.d(TAG, String.format("task end --- copy: %dms preprocess: %dms recognize: %dms render: %dms", timeConsumer.copyTime, timeConsumer.preprocessTime, timeConsumer.recognizeTime, timeConsumer.renderTime));
+    }
+
+    public byte[] getOriginBytes() {
+        return originBytes;
+    }
+
+    public void setOriginBytes(byte[] originBytes) {
+        this.originBytes = originBytes;
     }
 
     public Bitmap getOriginBitmap() {
