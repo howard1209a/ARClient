@@ -13,14 +13,11 @@ import com.narc.arclient.process.processor.RecognizeProcessor;
 
 
 public class MainActivity extends AppCompatActivity {
-    private TextureView imgTextureView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        imgTextureView = findViewById(R.id.imgTextureView);
 
         RecognizeProcessor.init(this);
         ICameraManager.init(this);

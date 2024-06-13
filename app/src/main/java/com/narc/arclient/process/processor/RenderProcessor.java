@@ -26,21 +26,10 @@ public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> 
     public RecognizeTask process(RecognizeTask recognizeTask) {
         recognizeTask.recordTimeConsumeStart(TaskType.RENDER);
 
-        Bitmap originBitmap = recognizeTask.getOriginBitmap();
-        GestureRecognizerResult gestureRecognizerResult = recognizeTask.getGestureRecognizerResult();
-        List<List<NormalizedLandmark>> landmarks = gestureRecognizerResult.landmarks();
-        if (!landmarks.isEmpty()) {
-            recognizeTask.setRenderedBitmap(drawLandmarks(originBitmap, landmarks.get(0)));
-        } else {
-            recognizeTask.setRenderedBitmap(originBitmap);
-        }
 
-        TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
-        Canvas canvas = imgTextureView.lockCanvas();
-        if (canvas != null) {
-            canvas.drawBitmap(recognizeTask.getRenderedBitmap(), 0, 0, null);
-            imgTextureView.unlockCanvasAndPost(canvas);
-        }
+
+
+
 
         recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
 

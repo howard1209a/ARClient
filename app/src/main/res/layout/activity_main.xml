@@ -5,18 +5,26 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-<!--    <Button-->
-<!--        android:id="@+id/button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Button"-->
-<!--        tools:layout_editor_absoluteX="175dp"-->
-<!--        tools:layout_editor_absoluteY="281dp"-->
-<!--        tools:ignore="MissingConstraints" />-->
-
-    <TextureView
-        android:id="@+id/imgTextureView"
+    <com.narc.arclient.front.CenterRectangleView
+        android:id="@+id/tv_title1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.narc.arclient.front.OtherView
+        android:id="@+id/tv_title3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_title2"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="title2"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        tools:ignore="MissingConstraints,Suspicious0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,6 +41,10 @@ android {
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/io.netty.versions.properties'
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 
@@ -81,4 +85,5 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf-lite:1.64.0' // CURRENT_GRPC_VERSION
     implementation 'io.grpc:grpc-stub:1.64.0' // CURRENT_GRPC_VERSION
     implementation 'org.apache.tomcat:annotations-api:6.0.53'
+    implementation(fileTree("libs"))
 }

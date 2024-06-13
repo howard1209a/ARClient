@@ -40,38 +40,38 @@ public class RemoteRecognizeServiceStub {
             // 所有回调在 gRPC 库管理的线程池中执行
             @Override
             public void onNext(RecognizeResponse value) {
-                TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
-                Canvas canvas = imgTextureView.lockCanvas();
-                if (canvas != null) {
-                    Bitmap bitmap = recognizeTask.getOriginBitmap();
-                    // 获取Bitmap的宽高
-                    int bitmapWidth = bitmap.getWidth();
-                    int bitmapHeight = bitmap.getHeight();
-
-                    // 获取TextureView的宽高
-                    int viewWidth = imgTextureView.getWidth();
-                    int viewHeight = imgTextureView.getHeight();
-
-                    // 计算缩放比例
-                    float scale = Math.min((float) viewWidth / bitmapWidth, (float) viewHeight / bitmapHeight);
-
-                    // 计算Bitmap绘制的起始位置，使其居中显示
-                    float dx = (viewWidth - bitmapWidth * scale) / 2;
-                    float dy = (viewHeight - bitmapHeight * scale) / 2;
-
-                    // 设置缩放和位移
-                    canvas.save();
-                    canvas.translate(dx, dy);
-                    canvas.scale(scale, scale);
-
-                    // 绘制Bitmap
-                    canvas.drawBitmap(bitmap, 0, 0, null);
-
-                    // 恢复Canvas状态
-                    canvas.restore();
-
-                    imgTextureView.unlockCanvasAndPost(canvas);
-                }
+//                TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
+//                Canvas canvas = imgTextureView.lockCanvas();
+//                if (canvas != null) {
+//                    Bitmap bitmap = recognizeTask.getOriginBitmap();
+//                    // 获取Bitmap的宽高
+//                    int bitmapWidth = bitmap.getWidth();
+//                    int bitmapHeight = bitmap.getHeight();
+//
+//                    // 获取TextureView的宽高
+//                    int viewWidth = imgTextureView.getWidth();
+//                    int viewHeight = imgTextureView.getHeight();
+//
+//                    // 计算缩放比例
+//                    float scale = Math.min((float) viewWidth / bitmapWidth, (float) viewHeight / bitmapHeight);
+//
+//                    // 计算Bitmap绘制的起始位置，使其居中显示
+//                    float dx = (viewWidth - bitmapWidth * scale) / 2;
+//                    float dy = (viewHeight - bitmapHeight * scale) / 2;
+//
+//                    // 设置缩放和位移
+//                    canvas.save();
+//                    canvas.translate(dx, dy);
+//                    canvas.scale(scale, scale);
+//
+//                    // 绘制Bitmap
+//                    canvas.drawBitmap(bitmap, 0, 0, null);
+//
+//                    // 恢复Canvas状态
+//                    canvas.restore();
+//
+//                    imgTextureView.unlockCanvasAndPost(canvas);
+//                }
 
             }
 
