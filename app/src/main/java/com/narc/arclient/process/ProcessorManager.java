@@ -1,20 +1,12 @@
-package com.narc.arclient.processor;
+package com.narc.arclient.process;
 
 import static android.content.ContentValues.TAG;
 
 import static com.narc.arclient.enums.ProcessorEnums.MONITOR_FREQUENCY;
 
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.util.Log;
 
-import com.google.mediapipe.framework.image.MPImage;
-import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -48,14 +40,6 @@ public class ProcessorManager {
             int normalExecutorQueueSize = normalExecutor.getQueue().size();
             int imageCopyExecutorQueueSize = imageCopyExecutor.getQueue().size();
             Log.d(TAG, String.format("normalExecutor queue size: %d imageCopyExecutor queue size: %d", normalExecutorQueueSize, imageCopyExecutorQueueSize));
-//            Log.d(TAG, "Pool Size: " + scheduledExecutor.getPoolSize());
-//            Log.d(TAG, "Active Threads: " + scheduledExecutor.getActiveCount());
-//            Log.d(TAG, "Completed Tasks: " + scheduledExecutor.getCompletedTaskCount());
-//            Log.d(TAG, "Task Count: " + scheduledExecutor.getTaskCount());
-//            Log.d(TAG, "Queue Size: " + scheduledExecutor.getQueue().size());
-//            Log.d(TAG, "isTerminating: " + scheduledExecutor.isTerminating() );
-//            Log.d(TAG, "isTerminated: " + scheduledExecutor.isTerminated());
-//            Log.d(TAG, "isShutdown: " + scheduledExecutor.isShutdown());
         }
 
         private void monitorSystemResources() {

@@ -4,23 +4,18 @@ import static android.content.ContentValues.TAG;
 import static android.hardware.camera2.params.SessionConfiguration.SESSION_REGULAR;
 
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.SessionConfiguration;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
-import com.narc.arclient.processor.ProcessorManager;
+import com.narc.arclient.process.ProcessorManager;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class CameraStateCallback extends CameraDevice.StateCallback {
 

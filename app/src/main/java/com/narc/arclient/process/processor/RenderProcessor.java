@@ -1,4 +1,4 @@
-package com.narc.arclient.processor;
+package com.narc.arclient.process.processor;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,6 +12,7 @@ import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.entity.RecognizeTask;
 import com.narc.arclient.enums.TaskType;
+import com.narc.arclient.process.Processor;
 
 import java.util.List;
 

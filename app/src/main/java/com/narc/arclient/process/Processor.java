@@ -1,4 +1,4 @@
-package com.narc.arclient.processor;
+package com.narc.arclient.process;
 
 public interface Processor<T, S> {
     S process(T t);

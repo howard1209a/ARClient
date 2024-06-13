@@ -1,175 +1,35 @@
-package com.narc.arclient;//package com.narc.arclient;
-//
-//import static androidx.core.content.ContentProviderCompat.requireContext;
-//import static com.narc.arclient.enums.CameraEnums.CAMERA_PERMISSION_REQUEST_CODE;
-//
-//import android.Manifest;
-//import android.content.pm.PackageManager;
-//import android.graphics.SurfaceTexture;
-//import android.hardware.camera2.CameraAccessException;
-//import android.hardware.camera2.CameraCaptureSession;
-//import android.hardware.camera2.CameraDevice;
-//import android.hardware.camera2.CameraManager;
-//import android.hardware.camera2.CaptureRequest;
-//import android.hardware.camera2.CaptureResult;
-//import android.hardware.camera2.TotalCaptureResult;
-//import android.os.AsyncTask;
-//import android.os.Bundle;
-//import android.util.Size;
-//import android.view.Surface;
-//import android.view.TextureView;
-//import android.view.TextureView.SurfaceTextureListener;
-//
-//import androidx.annotation.NonNull;
-//import androidx.appcompat.app.AppCompatActivity;
-//import androidx.core.app.ActivityCompat;
-//import androidx.core.content.ContextCompat;
-//
-//import com.narc.arclient.R;
-//import com.narc.arclient.camera.ICameraManager;
-//import com.narc.arclient.processor.RecognizeProcessor;
-//
-//import java.util.Arrays;
-//
-//public class MainActivity extends AppCompatActivity {
-//    private TextureView imgTextureView;
-//    private ICameraManager iCameraManager;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        imgTextureView = findViewById(R.id.imgTextureView);
-//
-//        RecognizeProcessor.init(this);
-//        ICameraManager.init(this);
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        iCameraManager.permissionResultCallback(requestCode, permissions, grantResults);
-//    }
-//}
+package com.narc.arclient;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.TextureView;
 
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.narc.arclient.network.GreeterGrpc;
-import com.narc.arclient.network.HelloReply;
-import com.narc.arclient.network.HelloRequest;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
+import com.narc.arclient.camera.ICameraManager;
+import com.narc.arclient.process.processor.RecognizeProcessor;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.netty.NettyServerBuilder;
-import io.grpc.stub.StreamObserver;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "GrpcDemo";
-
-    private static final int PROT = 50051;
-    private static final String NAME = "hello world";
-    private static final String HOST = "10.129.242.98"; // 10.129.242.98
+    private TextureView imgTextureView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Log.d(TAG, "start");
-//        startServer(PROT);
-//        Log.d(TAG, "start server.");
-        startClient(HOST, PROT, NAME);
-//        // 启动TCP连接测试
-//        new TcpConnectionTestTask().execute(HOST, PROT);
-        Log.d(TAG, "start client.");
+
+        imgTextureView = findViewById(R.id.imgTextureView);
+
+        RecognizeProcessor.init(this);
+        ICameraManager.init(this);
     }
 
-    private void startServer(int port) {
-        try {
-            NettyServerBuilder.forPort(port)
-                    .addService(new GreeterImpl())
-                    .build()
-                    .start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(TAG, e.getMessage());
-        }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ICameraManager.getInstance().permissionResultCallback(requestCode, permissions, grantResults);
     }
-
-    private void startClient(String host, int port, String name) {
-        ManagedChannel mChannel = ManagedChannelBuilder.forAddress(host, port)
-                .usePlaintext()
-                .build();
-        GreeterGrpc.GreeterStub stub = GreeterGrpc.newStub(mChannel);
-        HelloRequest message = HelloRequest.newBuilder().setName(name).build();
-        stub.sayHello(message, new StreamObserver<HelloReply>() {
-            @Override
-            public void onNext(HelloReply value) {
-                Log.d(TAG, value.getMessage());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d(TAG, "sayHello onError: " + t.getMessage(), t);
-            }
-
-            @Override
-            public void onCompleted() {
-                Log.d(TAG, "sayHello onCompleted.");
-            }
-        });
-    }
-
-    private class GreeterImpl extends GreeterGrpc.GreeterImplBase {
-        public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
-            Log.d(TAG, "shoudao!");
-            responseObserver.onNext(sayHello(request));
-            responseObserver.onCompleted();
-        }
-
-        private HelloReply sayHello(HelloRequest request) {
-            Log.d(TAG, "shoudao!");
-            return HelloReply.newBuilder()
-                    .setMessage(request.getName())
-                    .build();
-        }
-    }
-
-    private static class TcpConnectionTestTask extends AsyncTask<Object, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Object... params) {
-            String host = (String) params[0];
-            int port = (int) params[1];
-
-            try (Socket socket = new Socket(host, port)) {
-                Log.d(TAG, "Connected to " + host + " on port " + port);
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, "Connection failed: " + e.getMessage());
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                Log.d(TAG, "TCP connection successful.");
-            } else {
-                Log.d(TAG, "TCP connection failed.");
-            }
-        }
-    }
-
 }
 

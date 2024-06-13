@@ -1,13 +1,13 @@
-package com.narc.arclient.processor;
+package com.narc.arclient.process.processor;
 
 import static com.narc.arclient.enums.ProcessorEnums.SCALE_FACTOR;
 
 import android.graphics.Bitmap;
 
 import com.google.mediapipe.framework.image.BitmapImageBuilder;
-import com.google.mediapipe.framework.image.MPImage;
 import com.narc.arclient.entity.RecognizeTask;
 import com.narc.arclient.enums.TaskType;
+import com.narc.arclient.process.Processor;
 
 public class PreHandleProcessor implements Processor<RecognizeTask, RecognizeTask> {
     private static final PreHandleProcessor PRE_HANDLE_PROCESSOR = new PreHandleProcessor();
