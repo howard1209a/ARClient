@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.narc.arclient.camera.ICameraManager;
+import com.narc.arclient.front.ViewHandler;
 import com.narc.arclient.process.processor.RecognizeProcessor;
 
 
@@ -21,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
 
         RecognizeProcessor.init(this);
         ICameraManager.init(this);
+
+        ViewHandler viewHandler = (ViewHandler) (findViewById(R.id.view_handler));
+        viewHandler.drawRec();
     }
 
     @Override
