@@ -6,6 +6,7 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <application
+        android:name=".ARClientApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,6 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data android:name="com.rayneo.mercury.app" android:value="true" />
 
     </application>
 
