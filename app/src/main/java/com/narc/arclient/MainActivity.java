@@ -1,9 +1,11 @@
 package com.narc.arclient;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -27,14 +29,36 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
 
-//        mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
-//            @Override
-//            public Unit invoke(ActivityMainBinding activityMainBinding) {
-//                activityMainBinding.btn1.setText("hh");
-//                return null;
-//            }
-//        });
+
+
+        mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
+            @Override
+            public Unit invoke(ActivityMainBinding activityMainBinding) {
+                mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
+                    @Override
+                    public Unit invoke(ActivityMainBinding activityMainBinding) {
+                        View myButton = activityMainBinding.myButton;
+                        // 修改按钮大小
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        params.width = 300; // 设置宽度为300像素
+                        params.height = 150; // 设置高度为150像素
+                        myButton.setLayoutParams(params);
+
+                        // 修改按钮位置
+                        myButton.setX(50); // 设置按钮的X坐标位置
+                        myButton.setY(100); // 设置按钮的Y坐标位置
+
+                        return null;
+                    }
+                });
+                return null;
+            }
+        });
 
 //        setContentView(R.layout.activity_main);
 //        setContentView(R.layout.handler);

@@ -5,10 +5,18 @@
     android:background="@color/black"
     android:orientation="vertical">
 
+<!--    <RadioButton-->
+<!--        android:id="@+id/view1"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#FFFF00" /> &lt;!&ndash; 黄色背景 &ndash;&gt;-->
+
     <View
+        android:id="@+id/myButton"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFF00" /> <!-- 黄色背景 -->
+        android:background="@drawable/button_border_white"
+        android:textColor="@android:color/black" />
 
     <!--    <Button-->
     <!--        android:id="@+id/btn_1"-->

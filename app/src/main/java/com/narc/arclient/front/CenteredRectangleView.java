@@ -7,32 +7,35 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class CenteredRectangleView extends View {
+import com.narc.arclient.databinding.ActivityMainBinding;
+import com.rayneo.arsdk.android.ui.wiget.BaseMirrorContainerView;
+
+public class CenteredRectangleView extends BaseMirrorContainerView<ActivityMainBinding> {
     private Paint paint;
     private Rect rect;
 
     public CenteredRectangleView(Context context) {
         super(context);
-        init();
+//        init();
     }
 
     public CenteredRectangleView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+//        init();
     }
 
     public CenteredRectangleView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+//        init();
     }
 
-    private void init() {
-        paint = new Paint();
-        paint.setColor(0xFF000000); // 设置矩形的颜色，这里是黑色
-        paint.setStyle(Paint.Style.STROKE); // 设置画笔风格为描边
-        paint.setStrokeWidth(5); // 设置描边宽度
-        rect = new Rect();
-    }
+//    public void init() {
+//        paint = new Paint();
+//        paint.setColor(0xFF000000); // 设置矩形的颜色，这里是黑色
+//        paint.setStyle(Paint.Style.STROKE); // 设置画笔风格为描边
+//        paint.setStrokeWidth(5); // 设置描边宽度
+//        rect = new Rect();
+//    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -57,6 +60,11 @@ public class CenteredRectangleView extends View {
 
         // 绘制矩形框
         canvas.drawRect(rect, paint);
+    }
+
+    @Override
+    public void onInit() {
+
     }
 }
 
