@@ -9,4 +9,6 @@ public class ProcessorEnums {
     public static final int MONITOR_FREQUENCY = 5;
     public static final float SCALE_FACTOR = 0.4f;
 
+    public static final float DETECT_BOX_SIZE_SCALE = 3.0f;
+
 }

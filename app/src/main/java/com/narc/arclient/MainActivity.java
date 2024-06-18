@@ -1,23 +1,22 @@
 package com.narc.arclient;
 
-import android.graphics.Canvas;
+import static com.narc.arclient.enums.ProcessorEnums.DETECT_BOX_SIZE_SCALE;
+
 import android.os.Bundle;
-import android.view.TextureView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.databinding.ActivityMainBinding;
-import com.narc.arclient.front.ViewHandler;
+import com.narc.arclient.entity.Rectangle;
+import com.narc.arclient.entity.RenderData;
 import com.narc.arclient.process.processor.RecognizeProcessor;
-import com.rayneo.arsdk.android.MercurySDK;
+import com.narc.arclient.process.processor.RenderProcessor;
 import com.rayneo.arsdk.android.ui.activity.BaseMirrorActivity;
 
 import kotlin.Unit;
@@ -29,55 +28,71 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
 
-
-
-        mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
-            @Override
-            public Unit invoke(ActivityMainBinding activityMainBinding) {
-                mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
-                    @Override
-                    public Unit invoke(ActivityMainBinding activityMainBinding) {
-                        View myButton = activityMainBinding.myButton;
-                        // 修改按钮大小
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        params.width = 300; // 设置宽度为300像素
-                        params.height = 150; // 设置高度为150像素
-                        myButton.setLayoutParams(params);
-
-                        // 修改按钮位置
-                        myButton.setX(50); // 设置按钮的X坐标位置
-                        myButton.setY(100); // 设置按钮的Y坐标位置
-
-                        return null;
-                    }
-                });
-                return null;
-            }
-        });
-
-//        setContentView(R.layout.activity_main);
-//        setContentView(R.layout.handler);
-//        setContentView(R.layout.activity_main);
-//        TextView textView = findViewById(R.id.tv_title1);
-//        textView.setText("howard");
-//        ViewHandler viewHandler = new ViewHandler(this);
-//        viewHandler.onInit();
-
+        RenderProcessor.init(this);
         RecognizeProcessor.init(this);
+
         ICameraManager.init(this);
-
-
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         ICameraManager.getInstance().permissionResultCallback(requestCode, permissions, grantResults);
+    }
+
+    public void updateView(RenderData renderData) {
+        if (renderData == null) {
+            mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
+                @Override
+                public Unit invoke(ActivityMainBinding activityMainBinding) {
+                    View detectView = activityMainBinding.detectBox;
+                    detectView.setVisibility(View.INVISIBLE);
+                    TextView detectText = activityMainBinding.detectText;
+                    detectText.setVisibility(View.INVISIBLE);
+                    return null;
+                }
+            });
+            return;
+        }
+
+        View rootView = getWindow().getDecorView().getRootView();
+        int rootViewWidth = rootView.getWidth() / 2;
+        int rootViewHeight = rootView.getHeight() / 2;
+
+        Rectangle rectangle = renderData.getRectangle();
+        int centerX = (int) (rootViewWidth * ((rectangle.getX1() + rectangle.getX2()) / 2));
+        int centerY = (int) (rootViewHeight * ((rectangle.getY1() + rectangle.getY2()) / 2));
+        int viewWidth = (int) (DETECT_BOX_SIZE_SCALE * rootViewWidth * (rectangle.getX2() - rectangle.getX1()));
+        int viewHeight = (int) (DETECT_BOX_SIZE_SCALE * rootViewHeight * (rectangle.getY2() - rectangle.getY1()));
+
+        mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
+            @Override
+            public Unit invoke(ActivityMainBinding activityMainBinding) {
+                View detectView = activityMainBinding.detectBox;
+                TextView detectText = activityMainBinding.detectText;
+                detectView.setVisibility(View.VISIBLE);
+                detectText.setVisibility(View.VISIBLE);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.width = viewWidth; // 设置宽度
+                params.height = viewHeight; // 设置高度
+                detectView.setLayoutParams(params);
+
+                // 修改按钮位置
+                detectView.setX(centerX); // 设置X坐标位置
+                detectView.setY(centerY); // 设置Y坐标位置
+
+                detectText.setX(centerX);
+                detectText.setY(centerY);
+                detectText.setText(renderData.getCategory().categoryName());
+
+                return null;
+            }
+        });
     }
 }
 
