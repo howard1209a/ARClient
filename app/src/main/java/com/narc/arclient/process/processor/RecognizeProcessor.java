@@ -60,7 +60,7 @@ public class RecognizeProcessor implements Processor<RecognizeTask, RecognizeTas
             List<NormalizedLandmark> normalizedLandmarks = gestureRecognizerResult.landmarks().get(0);
             Rectangle rectangle = detectRectangle(normalizedLandmarks);
             Category category = gestures.get(0).get(0);
-            recognizeTask.setRenderData(new RenderData(rectangle, category));
+            recognizeTask.setRenderData(new RenderData(rectangle, category.categoryName()));
         }
 
         recognizeTask.recordTimeConsumeEnd(TaskType.RECOGNIZE);

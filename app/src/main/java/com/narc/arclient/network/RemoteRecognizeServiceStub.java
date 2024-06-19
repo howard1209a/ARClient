@@ -14,6 +14,9 @@ import com.google.protobuf.ByteString;
 import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.entity.RecognizeTask;
+import com.narc.arclient.entity.Rectangle;
+import com.narc.arclient.entity.RenderData;
+import com.narc.arclient.process.processor.RenderProcessor;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -39,40 +42,17 @@ public class RemoteRecognizeServiceStub {
         stub.recognize(recognizeRequest, new StreamObserver<RecognizeResponse>() {
             // 所有回调在 gRPC 库管理的线程池中执行
             @Override
-            public void onNext(RecognizeResponse value) {
-//                TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
-//                Canvas canvas = imgTextureView.lockCanvas();
-//                if (canvas != null) {
-//                    Bitmap bitmap = recognizeTask.getOriginBitmap();
-//                    // 获取Bitmap的宽高
-//                    int bitmapWidth = bitmap.getWidth();
-//                    int bitmapHeight = bitmap.getHeight();
-//
-//                    // 获取TextureView的宽高
-//                    int viewWidth = imgTextureView.getWidth();
-//                    int viewHeight = imgTextureView.getHeight();
-//
-//                    // 计算缩放比例
-//                    float scale = Math.min((float) viewWidth / bitmapWidth, (float) viewHeight / bitmapHeight);
-//
-//                    // 计算Bitmap绘制的起始位置，使其居中显示
-//                    float dx = (viewWidth - bitmapWidth * scale) / 2;
-//                    float dy = (viewHeight - bitmapHeight * scale) / 2;
-//
-//                    // 设置缩放和位移
-//                    canvas.save();
-//                    canvas.translate(dx, dy);
-//                    canvas.scale(scale, scale);
-//
-//                    // 绘制Bitmap
-//                    canvas.drawBitmap(bitmap, 0, 0, null);
-//
-//                    // 恢复Canvas状态
-//                    canvas.restore();
-//
-//                    imgTextureView.unlockCanvasAndPost(canvas);
-//                }
+            public void onNext(RecognizeResponse recognizeResponse) {
+                if (!recognizeResponse.getGesture().equals("")) {
+                    float x1 = recognizeResponse.getX1();
+                    float y1 = recognizeResponse.getY1();
+                    float x2 = recognizeResponse.getX2();
+                    float y2 = recognizeResponse.getY2();
+                    RenderData renderData = new RenderData(new Rectangle(x1, y1, x2, y2), recognizeResponse.getGesture());
+                    recognizeTask.setRenderData(renderData);
+                }
 
+                RenderProcessor.getInstance().process(recognizeTask);
             }
 
             @Override

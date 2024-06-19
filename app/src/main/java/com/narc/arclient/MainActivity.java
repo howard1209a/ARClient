@@ -88,7 +88,7 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
 
                 detectText.setX(centerX);
                 detectText.setY(centerY);
-                detectText.setText(renderData.getCategory().categoryName());
+                detectText.setText(renderData.getCategory());
 
                 return null;
             }

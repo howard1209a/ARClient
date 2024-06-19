@@ -4,9 +4,9 @@ import com.google.mediapipe.tasks.components.containers.Category;
 
 public class RenderData {
     private Rectangle rectangle;
-    private Category category;
+    private String category;
 
-    public RenderData(Rectangle rectangle, Category category) {
+    public RenderData(Rectangle rectangle, String category) {
         this.rectangle = rectangle;
         this.category = category;
     }
@@ -15,7 +15,7 @@ public class RenderData {
         return rectangle;
     }
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 }
