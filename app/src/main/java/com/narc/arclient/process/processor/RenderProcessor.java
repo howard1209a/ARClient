@@ -4,43 +4,39 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.TextureView;
 
+import com.google.mediapipe.tasks.components.containers.Category;
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
+import com.narc.arclient.MainActivity;
 import com.narc.arclient.R;
 import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.entity.RecognizeTask;
+import com.narc.arclient.entity.Rectangle;
+import com.narc.arclient.entity.RenderData;
 import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.process.Processor;
 
 import java.util.List;
 
 public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> {
-    private static final RenderProcessor RENDER_PROCESSOR = new RenderProcessor();
+    private static RenderProcessor RENDER_PROCESSOR;
+    private MainActivity mainActivity;
 
-    private RenderProcessor() {
+    private RenderProcessor(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
 
     @Override
     public RecognizeTask process(RecognizeTask recognizeTask) {
         recognizeTask.recordTimeConsumeStart(TaskType.RENDER);
 
-        Bitmap originBitmap = recognizeTask.getOriginBitmap();
-        GestureRecognizerResult gestureRecognizerResult = recognizeTask.getGestureRecognizerResult();
-        List<List<NormalizedLandmark>> landmarks = gestureRecognizerResult.landmarks();
-        if (!landmarks.isEmpty()) {
-            recognizeTask.setRenderedBitmap(drawLandmarks(originBitmap, landmarks.get(0)));
-        } else {
-            recognizeTask.setRenderedBitmap(originBitmap);
-        }
-
-        TextureView imgTextureView = ICameraManager.getInstance().getMainActivity().findViewById(R.id.imgTextureView);
-        Canvas canvas = imgTextureView.lockCanvas();
-        if (canvas != null) {
-            canvas.drawBitmap(recognizeTask.getRenderedBitmap(), 0, 0, null);
-            imgTextureView.unlockCanvasAndPost(canvas);
-        }
+        // 合目更新必须在ui线程执行
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> mainActivity.updateView(recognizeTask.getRenderData()));
 
         recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
 
@@ -50,6 +46,10 @@ public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> 
         return recognizeTask;
     }
 
+
+    /**
+     * 绘制标记手部关键点的图像
+     */
     private Bitmap drawLandmarks(Bitmap bitmap, List<NormalizedLandmark> normalizedLandmarks) {
         // 创建一个可变的Bitmap副本，原Bitmap不可变
         Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
@@ -69,6 +69,10 @@ public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> 
         });
 
         return mutableBitmap;
+    }
+
+    public static void init(MainActivity mainActivity) {
+        RENDER_PROCESSOR = new RenderProcessor(mainActivity);
     }
 
     public static Processor<RecognizeTask, RecognizeTask> getInstance() {

@@ -17,7 +17,8 @@ public class RecognizeTask {
     private Bitmap originBitmap;
     private MPImage mpImage;
     private GestureRecognizerResult gestureRecognizerResult;
-    private Bitmap renderedBitmap;
+
+    private RenderData renderData;
     private TimeConsumer timeConsumer;
 
     public static class TimeConsumer {
@@ -93,15 +94,15 @@ public class RecognizeTask {
         this.gestureRecognizerResult = gestureRecognizerResult;
     }
 
-    public Bitmap getRenderedBitmap() {
-        return renderedBitmap;
-    }
-
-    public void setRenderedBitmap(Bitmap renderedBitmap) {
-        this.renderedBitmap = renderedBitmap;
-    }
-
     public Image getImage() {
         return image;
+    }
+
+    public RenderData getRenderData() {
+        return renderData;
+    }
+
+    public void setRenderData(RenderData renderData) {
+        this.renderData = renderData;
     }
 }
