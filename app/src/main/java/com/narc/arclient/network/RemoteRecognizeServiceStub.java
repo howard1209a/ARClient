@@ -16,6 +16,7 @@ import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.entity.RecognizeTask;
 import com.narc.arclient.entity.Rectangle;
 import com.narc.arclient.entity.RenderData;
+import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.process.processor.RenderProcessor;
 
 import io.grpc.ManagedChannel;
@@ -52,6 +53,7 @@ public class RemoteRecognizeServiceStub {
                     recognizeTask.setRenderData(renderData);
                 }
 
+                recognizeTask.recordTimeConsumeEnd(TaskType.REMOTE);
                 RenderProcessor.getInstance().process(recognizeTask);
             }
 

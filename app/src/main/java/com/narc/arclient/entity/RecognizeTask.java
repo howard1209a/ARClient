@@ -10,8 +10,16 @@ import com.google.mediapipe.framework.image.MPImage;
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult;
 import com.google.protobuf.ByteString;
 import com.narc.arclient.enums.TaskType;
+import com.narc.arclient.process.ProcessorManager;
 
 public class RecognizeTask {
+    private String deviceSerialNumber = ProcessorManager.deviceSerialNumber;
+    private String taskId;
+    private String unloadEnd;
+    private String startTime;
+    private String endTime;
+    private String posExist; // 0=not exist 1=exist
+
     private Image image;
     private byte[] originBytes;
     private Bitmap originBitmap;
@@ -26,12 +34,16 @@ public class RecognizeTask {
         private long preprocessTime;
         private long recognizeTime;
         private long renderTime;
+        private long remoteTime;
     }
 
 
     public RecognizeTask(Image image) {
         this.image = image;
         this.timeConsumer = new TimeConsumer();
+        this.taskId = ProcessorManager.TASK_ID.getAndIncrement() + "";
+        this.startTime = System.currentTimeMillis() + "";
+
     }
 
     public void recordTimeConsumeStart(TaskType taskType) {
@@ -43,6 +55,8 @@ public class RecognizeTask {
             timeConsumer.recognizeTime = System.currentTimeMillis();
         } else if (taskType == TaskType.RENDER) {
             timeConsumer.renderTime = System.currentTimeMillis();
+        } else if (taskType == TaskType.REMOTE) {
+            timeConsumer.remoteTime = System.currentTimeMillis();
         }
     }
 
@@ -55,11 +69,13 @@ public class RecognizeTask {
             timeConsumer.recognizeTime = System.currentTimeMillis() - timeConsumer.recognizeTime;
         } else if (taskType == TaskType.RENDER) {
             timeConsumer.renderTime = System.currentTimeMillis() - timeConsumer.renderTime;
+        } else if (taskType == TaskType.REMOTE) {
+            timeConsumer.remoteTime = System.currentTimeMillis() - timeConsumer.remoteTime;
         }
     }
 
     public void timeConsumeLog() {
-        Log.d(TAG, String.format("task end --- copy: %dms preprocess: %dms recognize: %dms render: %dms", timeConsumer.copyTime, timeConsumer.preprocessTime, timeConsumer.recognizeTime, timeConsumer.renderTime));
+        Log.d(TAG, String.format("deviceSerialNumber %s | taskId %s | unloadEnd %s | startTime %s | endTime %s | copyTime %dms | preprocessTime %dms | recognizeTime %dms | renderTime %dms | remoteTime %dms | posExist %s", deviceSerialNumber, taskId, unloadEnd, startTime, endTime, timeConsumer.copyTime, timeConsumer.preprocessTime, timeConsumer.recognizeTime, timeConsumer.renderTime, timeConsumer.remoteTime, posExist));
     }
 
     public byte[] getOriginBytes() {
@@ -104,5 +120,29 @@ public class RecognizeTask {
 
     public void setRenderData(RenderData renderData) {
         this.renderData = renderData;
+    }
+
+    public String getUnloadEnd() {
+        return unloadEnd;
+    }
+
+    public void setUnloadEnd(String unloadEnd) {
+        this.unloadEnd = unloadEnd;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getPosExist() {
+        return posExist;
+    }
+
+    public void setPosExist(String posExist) {
+        this.posExist = posExist;
     }
 }

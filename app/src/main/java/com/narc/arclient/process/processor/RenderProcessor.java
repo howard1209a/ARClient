@@ -36,12 +36,7 @@ public class RenderProcessor implements Processor<RecognizeTask, RecognizeTask> 
 
         // 合目更新必须在ui线程执行
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> mainActivity.updateView(recognizeTask.getRenderData()));
-
-        recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
-
-        // 打印本次任务各部分耗时
-        recognizeTask.timeConsumeLog();
+        handler.post(() -> mainActivity.updateView(recognizeTask.getRenderData(),recognizeTask));
 
         return recognizeTask;
     }

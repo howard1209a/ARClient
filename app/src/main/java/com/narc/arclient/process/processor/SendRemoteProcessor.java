@@ -1,6 +1,7 @@
 package com.narc.arclient.process.processor;
 
 import com.narc.arclient.entity.RecognizeTask;
+import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.network.RemoteRecognizeServiceStub;
 import com.narc.arclient.process.Processor;
 
@@ -12,6 +13,7 @@ public class SendRemoteProcessor implements Processor<RecognizeTask, RecognizeTa
 
     @Override
     public RecognizeTask process(RecognizeTask recognizeTask) {
+        recognizeTask.recordTimeConsumeStart(TaskType.REMOTE);
         RemoteRecognizeServiceStub.getInstance().recognize(recognizeTask);
         return null;
     }

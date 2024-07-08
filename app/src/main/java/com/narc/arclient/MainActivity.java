@@ -2,6 +2,8 @@ package com.narc.arclient;
 
 import static com.narc.arclient.enums.ProcessorEnums.DETECT_BOX_SIZE_SCALE;
 
+import android.content.Context;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -13,8 +15,11 @@ import androidx.annotation.NonNull;
 
 import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.databinding.ActivityMainBinding;
+import com.narc.arclient.entity.RecognizeTask;
 import com.narc.arclient.entity.Rectangle;
 import com.narc.arclient.entity.RenderData;
+import com.narc.arclient.enums.TaskType;
+import com.narc.arclient.process.ProcessorManager;
 import com.narc.arclient.process.processor.RecognizeProcessor;
 import com.narc.arclient.process.processor.RenderProcessor;
 import com.rayneo.arsdk.android.ui.activity.BaseMirrorActivity;
@@ -31,6 +36,7 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
 
         RenderProcessor.init(this);
         RecognizeProcessor.init(this);
+        ProcessorManager.init(this);
 
         ICameraManager.init(this);
     }
@@ -41,7 +47,7 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
         ICameraManager.getInstance().permissionResultCallback(requestCode, permissions, grantResults);
     }
 
-    public void updateView(RenderData renderData) {
+    public void updateView(RenderData renderData, RecognizeTask recognizeTask) {
         if (renderData == null) {
             mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
                 @Override
@@ -53,6 +59,7 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
                     return null;
                 }
             });
+            taskEndHandle(recognizeTask, false);
             return;
         }
 
@@ -94,6 +101,17 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
                 return null;
             }
         });
+
+        taskEndHandle(recognizeTask, true);
+    }
+
+    private void taskEndHandle(RecognizeTask recognizeTask, boolean posExist) {
+        recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
+        recognizeTask.setEndTime(System.currentTimeMillis() + "");
+        recognizeTask.setPosExist(posExist ? "1" : "0");
+
+        // 打印本次任务各部分耗时
+        recognizeTask.timeConsumeLog();
     }
 }
 

@@ -3,8 +3,10 @@ package com.narc.arclient.camera.callback;
 import static android.content.ContentValues.TAG;
 import static com.narc.arclient.enums.CameraEnums.FPS;
 
+import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
