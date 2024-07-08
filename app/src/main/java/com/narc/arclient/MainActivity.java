@@ -57,14 +57,15 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
         }
 
         View rootView = getWindow().getDecorView().getRootView();
+        // 获取到的是左右两框屏幕拼成的逻辑屏幕，所以宽度需要除2
         int rootViewWidth = rootView.getWidth() / 2;
-        int rootViewHeight = rootView.getHeight() / 2;
+        int rootViewHeight = rootView.getHeight();
 
         Rectangle rectangle = renderData.getRectangle();
-        int centerX = (int) (rootViewWidth * ((rectangle.getX1() + rectangle.getX2()) / 2));
-        int centerY = (int) (rootViewHeight * ((rectangle.getY1() + rectangle.getY2()) / 2));
-        int viewWidth = (int) (DETECT_BOX_SIZE_SCALE * rootViewWidth * (rectangle.getX2() - rectangle.getX1()));
-        int viewHeight = (int) (DETECT_BOX_SIZE_SCALE * rootViewHeight * (rectangle.getY2() - rectangle.getY1()));
+        int leftTopX = Math.max((int) (rootViewWidth * rectangle.getX1()), 0);
+        int leftTopY = Math.max((int) (rootViewHeight * rectangle.getY1()), 0);
+        int viewWidth = Math.min((int) (DETECT_BOX_SIZE_SCALE * rootViewWidth * (rectangle.getX2() - rectangle.getX1())), rootViewWidth - leftTopX);
+        int viewHeight = Math.min((int) (DETECT_BOX_SIZE_SCALE * rootViewHeight * (rectangle.getY2() - rectangle.getY1())), rootViewHeight - leftTopY);
 
         mBindingPair.updateView(new Function1<ActivityMainBinding, Unit>() {
             @Override
@@ -83,11 +84,11 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
                 detectView.setLayoutParams(params);
 
                 // 修改按钮位置
-                detectView.setX(centerX); // 设置X坐标位置
-                detectView.setY(centerY); // 设置Y坐标位置
+                detectView.setX(leftTopX); // 设置X坐标位置
+                detectView.setY(leftTopY); // 设置Y坐标位置
 
-                detectText.setX(centerX);
-                detectText.setY(centerY);
+                detectText.setX(leftTopX);
+                detectText.setY(leftTopY);
                 detectText.setText(renderData.getCategory());
 
                 return null;

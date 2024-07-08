@@ -10,14 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/button_border_white"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/detect_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello, World!"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="invisible" />
 
 
 </LinearLayout>
