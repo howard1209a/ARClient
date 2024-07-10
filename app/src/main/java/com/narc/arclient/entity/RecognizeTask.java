@@ -45,7 +45,6 @@ public class RecognizeTask {
         this.timeConsumer = new TimeConsumer();
         this.taskId = ProcessorManager.TASK_ID.getAndIncrement() + "";
         this.startTime = System.currentTimeMillis() + "";
-
     }
 
     public void recordTimeConsumeStart(TaskType taskType) {
@@ -178,5 +177,17 @@ public class RecognizeTask {
 
     public void setPosExist(String posExist) {
         this.posExist = posExist;
+    }
+
+    public String getDeviceSerialNumber() {
+        return deviceSerialNumber;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getStartTime() {
+        return startTime;
     }
 }

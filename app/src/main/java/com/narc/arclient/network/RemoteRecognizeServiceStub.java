@@ -77,6 +77,68 @@ public class RemoteRecognizeServiceStub {
         });
     }
 
+    public void logReport(RecognizeTask recognizeTask) {
+        LogReportRequest logReportRequest = LogReportRequest.newBuilder()
+                .setDeviceSerialNumber(recognizeTask.getDeviceSerialNumber())
+                .setTaskId(recognizeTask.getTaskId())
+                .setUnloadEnd(recognizeTask.getUnloadEnd())
+                .setStartTime(recognizeTask.getStartTime())
+                .setEndTime(recognizeTask.getEndTime())
+                .setPosExist(recognizeTask.getPosExist())
+                .setCopyTime(recognizeTask.getTimeConsume(TaskType.COPY))
+                .setPreprocessTime(recognizeTask.getTimeConsume(TaskType.PREPROCESS))
+                .setRecognizeTime(recognizeTask.getTimeConsume(TaskType.RECOGNIZE))
+                .setRenderTime(recognizeTask.getTimeConsume(TaskType.RENDER))
+                .setTransfer2RemoteTime(recognizeTask.getTimeConsume(TRANSFER_2_REMOTE))
+                .setComputeRemoteTime(recognizeTask.getTimeConsume(COMPUTE_REMOTE))
+                .setTransfer2LocalTime(recognizeTask.getTimeConsume(TRANSFER_2_LOCAL))
+                .build();
+
+        stub.logReport(logReportRequest, new StreamObserver<EmptyResponse>() {
+            @Override
+            public void onNext(EmptyResponse value) {
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.e(TAG, t.toString());
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+    }
+
+    public void systemStateReport(String deviceSerialNumber, long timestamp, String cpuUsage, String memUsage, String batteryLevel) {
+        SystemStateRequest systemStateRequest = SystemStateRequest.newBuilder()
+                .setDeviceSerialNumber(deviceSerialNumber)
+                .setTimestamp(timestamp)
+                .setCpuUsage(cpuUsage)
+                .setMemUsage(memUsage)
+                .setBatteryLevel(batteryLevel)
+                .build();
+
+        stub.systemState(systemStateRequest, new StreamObserver<EmptyResponse>() {
+            @Override
+            public void onNext(EmptyResponse value) {
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.e(TAG, t.toString());
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+    }
+
     public static RemoteRecognizeServiceStub getInstance() {
         return REMOTE_RECOGNIZE_SERVICE_STUB;
     }

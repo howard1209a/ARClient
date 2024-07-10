@@ -9,6 +9,7 @@ import android.os.BatteryManager;
 import android.util.Log;
 
 import com.narc.arclient.MainActivity;
+import com.narc.arclient.network.RemoteRecognizeServiceStub;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -81,7 +82,9 @@ public class ProcessorManager {
         private void monitorSystemResources() {
             // 获取电池信息
             BatteryManager batteryManager = (BatteryManager) mainActivity.getSystemService(Context.BATTERY_SERVICE);
-            int batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+            String batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "";
+            String cpuUsage = null;
+            String memUsage = null;
 
             try {
                 String[] cmd = {
@@ -93,7 +96,10 @@ public class ProcessorManager {
                 while ((line = reader.readLine()) != null) {
                     if (line.contains("com.narc")) {
                         String[] parts = line.split("\\s+");
-                        Log.d(TAG, String.format("CPU usage: %.2f MEM usage: %.2f battery level: %d", Double.parseDouble(parts[9]), Double.parseDouble(parts[10]), batteryLevel));
+                        cpuUsage = String.format("%.2f", Double.parseDouble(parts[9]));
+                        memUsage = String.format("%.2f", Double.parseDouble(parts[10]));
+                        Log.d(TAG, String.format("CPU usage: %s MEM usage: %s battery level: %s", cpuUsage, memUsage, batteryLevel));
+                        RemoteRecognizeServiceStub.getInstance().systemStateReport(ProcessorManager.deviceSerialNumber, System.currentTimeMillis(), cpuUsage, memUsage, batteryLevel);
                         break;
                     }
                 }

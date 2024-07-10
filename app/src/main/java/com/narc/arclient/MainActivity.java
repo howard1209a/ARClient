@@ -20,6 +20,7 @@ import com.narc.arclient.entity.Rectangle;
 import com.narc.arclient.entity.RenderData;
 import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.process.ProcessorManager;
+import com.narc.arclient.process.processor.LogRemoteProcessor;
 import com.narc.arclient.process.processor.RecognizeProcessor;
 import com.narc.arclient.process.processor.RenderProcessor;
 import com.rayneo.arsdk.android.ui.activity.BaseMirrorActivity;
@@ -59,7 +60,7 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
                     return null;
                 }
             });
-            taskEndHandle(recognizeTask, false);
+            postHandle(recognizeTask, "0");
             return;
         }
 
@@ -102,16 +103,17 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
             }
         });
 
-        taskEndHandle(recognizeTask, true);
+        postHandle(recognizeTask, "1");
     }
 
-    private void taskEndHandle(RecognizeTask recognizeTask, boolean posExist) {
+    private void postHandle(RecognizeTask recognizeTask, String posExist) {
         recognizeTask.recordTimeConsumeEnd(TaskType.RENDER);
         recognizeTask.setEndTime(System.currentTimeMillis() + "");
-        recognizeTask.setPosExist(posExist ? "1" : "0");
+        recognizeTask.setPosExist(posExist);
 
-        // 打印本次任务各部分耗时
-        recognizeTask.timeConsumeLog();
+        ProcessorManager.normalExecutor.execute(() -> {
+            LogRemoteProcessor.getInstance().process(recognizeTask);
+        });
     }
 }
 
