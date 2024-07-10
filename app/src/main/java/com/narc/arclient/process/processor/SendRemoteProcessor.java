@@ -1,6 +1,7 @@
 package com.narc.arclient.process.processor;
 
 import com.narc.arclient.entity.RecognizeTask;
+import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.network.RemoteRecognizeServiceStub;
 import com.narc.arclient.process.Processor;
 

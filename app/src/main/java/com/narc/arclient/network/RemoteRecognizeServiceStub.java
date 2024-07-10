@@ -4,6 +4,9 @@ import static android.content.ContentValues.TAG;
 
 import static com.narc.arclient.enums.NetworkEnums.HOST;
 import static com.narc.arclient.enums.NetworkEnums.PORT;
+import static com.narc.arclient.enums.TaskType.COMPUTE_REMOTE;
+import static com.narc.arclient.enums.TaskType.TRANSFER_2_LOCAL;
+import static com.narc.arclient.enums.TaskType.TRANSFER_2_REMOTE;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -16,6 +19,7 @@ import com.narc.arclient.camera.ICameraManager;
 import com.narc.arclient.entity.RecognizeTask;
 import com.narc.arclient.entity.Rectangle;
 import com.narc.arclient.entity.RenderData;
+import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.process.processor.RenderProcessor;
 
 import io.grpc.ManagedChannel;
@@ -36,6 +40,8 @@ public class RemoteRecognizeServiceStub {
     }
 
     public void recognize(RecognizeTask recognizeTask) {
+        recognizeTask.setTimeConsume(TRANSFER_2_REMOTE, System.currentTimeMillis());
+
         ByteString byteString = ByteString.copyFrom(recognizeTask.getOriginBytes());
         RecognizeRequest recognizeRequest = RecognizeRequest.newBuilder().setBitmapData(byteString).build();
 
@@ -52,7 +58,73 @@ public class RemoteRecognizeServiceStub {
                     recognizeTask.setRenderData(renderData);
                 }
 
+                recognizeTask.setTimeConsume(TRANSFER_2_REMOTE, recognizeResponse.getRecieveTime() - recognizeTask.getTimeConsume(TRANSFER_2_REMOTE));
+                recognizeTask.setTimeConsume(COMPUTE_REMOTE, recognizeResponse.getSendbackTime() - recognizeResponse.getRecieveTime());
+                recognizeTask.setTimeConsume(TRANSFER_2_LOCAL, System.currentTimeMillis() - recognizeResponse.getSendbackTime());
+
                 RenderProcessor.getInstance().process(recognizeTask);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.e(TAG, t.toString());
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+    }
+
+    public void logReport(RecognizeTask recognizeTask) {
+        LogReportRequest logReportRequest = LogReportRequest.newBuilder()
+                .setDeviceSerialNumber(recognizeTask.getDeviceSerialNumber())
+                .setTaskId(recognizeTask.getTaskId())
+                .setUnloadEnd(recognizeTask.getUnloadEnd())
+                .setStartTime(recognizeTask.getStartTime())
+                .setEndTime(recognizeTask.getEndTime())
+                .setPosExist(recognizeTask.getPosExist())
+                .setCopyTime(recognizeTask.getTimeConsume(TaskType.COPY))
+                .setPreprocessTime(recognizeTask.getTimeConsume(TaskType.PREPROCESS))
+                .setRecognizeTime(recognizeTask.getTimeConsume(TaskType.RECOGNIZE))
+                .setRenderTime(recognizeTask.getTimeConsume(TaskType.RENDER))
+                .setTransfer2RemoteTime(recognizeTask.getTimeConsume(TRANSFER_2_REMOTE))
+                .setComputeRemoteTime(recognizeTask.getTimeConsume(COMPUTE_REMOTE))
+                .setTransfer2LocalTime(recognizeTask.getTimeConsume(TRANSFER_2_LOCAL))
+                .build();
+
+        stub.logReport(logReportRequest, new StreamObserver<EmptyResponse>() {
+            @Override
+            public void onNext(EmptyResponse value) {
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.e(TAG, t.toString());
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+    }
+
+    public void systemStateReport(String deviceSerialNumber, long timestamp, String cpuUsage, String memUsage, String batteryLevel) {
+        SystemStateRequest systemStateRequest = SystemStateRequest.newBuilder()
+                .setDeviceSerialNumber(deviceSerialNumber)
+                .setTimestamp(timestamp)
+                .setCpuUsage(cpuUsage)
+                .setMemUsage(memUsage)
+                .setBatteryLevel(batteryLevel)
+                .build();
+
+        stub.systemState(systemStateRequest, new StreamObserver<EmptyResponse>() {
+            @Override
+            public void onNext(EmptyResponse value) {
+
             }
 
             @Override
