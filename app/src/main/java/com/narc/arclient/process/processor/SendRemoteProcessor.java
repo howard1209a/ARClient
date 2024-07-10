@@ -13,7 +13,6 @@ public class SendRemoteProcessor implements Processor<RecognizeTask, RecognizeTa
 
     @Override
     public RecognizeTask process(RecognizeTask recognizeTask) {
-        recognizeTask.recordTimeConsumeStart(TaskType.REMOTE);
         RemoteRecognizeServiceStub.getInstance().recognize(recognizeTask);
         return null;
     }

@@ -4,6 +4,9 @@ import static android.content.ContentValues.TAG;
 
 import static com.narc.arclient.enums.NetworkEnums.HOST;
 import static com.narc.arclient.enums.NetworkEnums.PORT;
+import static com.narc.arclient.enums.TaskType.COMPUTE_REMOTE;
+import static com.narc.arclient.enums.TaskType.TRANSFER_2_LOCAL;
+import static com.narc.arclient.enums.TaskType.TRANSFER_2_REMOTE;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -37,6 +40,8 @@ public class RemoteRecognizeServiceStub {
     }
 
     public void recognize(RecognizeTask recognizeTask) {
+        recognizeTask.setTimeConsume(TRANSFER_2_REMOTE, System.currentTimeMillis());
+
         ByteString byteString = ByteString.copyFrom(recognizeTask.getOriginBytes());
         RecognizeRequest recognizeRequest = RecognizeRequest.newBuilder().setBitmapData(byteString).build();
 
@@ -53,7 +58,10 @@ public class RemoteRecognizeServiceStub {
                     recognizeTask.setRenderData(renderData);
                 }
 
-                recognizeTask.recordTimeConsumeEnd(TaskType.REMOTE);
+                recognizeTask.setTimeConsume(TRANSFER_2_REMOTE, recognizeResponse.getRecieveTime() - recognizeTask.getTimeConsume(TRANSFER_2_REMOTE));
+                recognizeTask.setTimeConsume(COMPUTE_REMOTE, recognizeResponse.getSendbackTime() - recognizeResponse.getRecieveTime());
+                recognizeTask.setTimeConsume(TRANSFER_2_LOCAL, System.currentTimeMillis() - recognizeResponse.getSendbackTime());
+
                 RenderProcessor.getInstance().process(recognizeTask);
             }
 

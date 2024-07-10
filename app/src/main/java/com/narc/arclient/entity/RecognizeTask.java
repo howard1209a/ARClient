@@ -34,7 +34,9 @@ public class RecognizeTask {
         private long preprocessTime;
         private long recognizeTime;
         private long renderTime;
-        private long remoteTime;
+        private long transfer2RemoteTime;
+        private long computeRemoteTime;
+        private long transfer2LocalTime;
     }
 
 
@@ -55,8 +57,6 @@ public class RecognizeTask {
             timeConsumer.recognizeTime = System.currentTimeMillis();
         } else if (taskType == TaskType.RENDER) {
             timeConsumer.renderTime = System.currentTimeMillis();
-        } else if (taskType == TaskType.REMOTE) {
-            timeConsumer.remoteTime = System.currentTimeMillis();
         }
     }
 
@@ -69,13 +69,47 @@ public class RecognizeTask {
             timeConsumer.recognizeTime = System.currentTimeMillis() - timeConsumer.recognizeTime;
         } else if (taskType == TaskType.RENDER) {
             timeConsumer.renderTime = System.currentTimeMillis() - timeConsumer.renderTime;
-        } else if (taskType == TaskType.REMOTE) {
-            timeConsumer.remoteTime = System.currentTimeMillis() - timeConsumer.remoteTime;
+        }
+    }
+
+    public void setTimeConsume(TaskType taskType, long time) {
+        if (taskType == TaskType.COPY) {
+            timeConsumer.copyTime = time;
+        } else if (taskType == TaskType.PREPROCESS) {
+            timeConsumer.preprocessTime = time;
+        } else if (taskType == TaskType.RECOGNIZE) {
+            timeConsumer.recognizeTime = time;
+        } else if (taskType == TaskType.RENDER) {
+            timeConsumer.renderTime = time;
+        } else if (taskType == TaskType.TRANSFER_2_REMOTE) {
+            timeConsumer.transfer2RemoteTime = time;
+        } else if (taskType == TaskType.COMPUTE_REMOTE) {
+            timeConsumer.computeRemoteTime = time;
+        } else {
+            timeConsumer.transfer2LocalTime = time;
+        }
+    }
+
+    public long getTimeConsume(TaskType taskType) {
+        if (taskType == TaskType.COPY) {
+            return timeConsumer.copyTime;
+        } else if (taskType == TaskType.PREPROCESS) {
+            return timeConsumer.preprocessTime;
+        } else if (taskType == TaskType.RECOGNIZE) {
+            return timeConsumer.recognizeTime;
+        } else if (taskType == TaskType.RENDER) {
+            return timeConsumer.renderTime;
+        } else if (taskType == TaskType.TRANSFER_2_REMOTE) {
+            return timeConsumer.transfer2RemoteTime;
+        } else if (taskType == TaskType.COMPUTE_REMOTE) {
+            return timeConsumer.computeRemoteTime;
+        } else {
+            return timeConsumer.transfer2LocalTime;
         }
     }
 
     public void timeConsumeLog() {
-        Log.d(TAG, String.format("deviceSerialNumber %s | taskId %s | unloadEnd %s | startTime %s | endTime %s | copyTime %dms | preprocessTime %dms | recognizeTime %dms | renderTime %dms | remoteTime %dms | posExist %s", deviceSerialNumber, taskId, unloadEnd, startTime, endTime, timeConsumer.copyTime, timeConsumer.preprocessTime, timeConsumer.recognizeTime, timeConsumer.renderTime, timeConsumer.remoteTime, posExist));
+        Log.d(TAG, String.format("deviceSerialNumber %s | taskId %s | unloadEnd %s | startTime %s | endTime %s | copyTime %dms | preprocessTime %dms | recognizeTime %dms | renderTime %dms | transfer2RemoteTime %dms | computeRemoteTime %dms | transfer2LocalTime %dms | posExist %s", deviceSerialNumber, taskId, unloadEnd, startTime, endTime, timeConsumer.copyTime, timeConsumer.preprocessTime, timeConsumer.recognizeTime, timeConsumer.renderTime, timeConsumer.transfer2RemoteTime, timeConsumer.computeRemoteTime, timeConsumer.transfer2LocalTime, posExist));
     }
 
     public byte[] getOriginBytes() {
