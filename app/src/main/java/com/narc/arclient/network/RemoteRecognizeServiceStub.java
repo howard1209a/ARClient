@@ -42,6 +42,7 @@ public class RemoteRecognizeServiceStub {
     public void recognize(RecognizeTask recognizeTask) {
         recognizeTask.setTimeConsume(TRANSFER_2_REMOTE, System.currentTimeMillis());
 
+        // copyFrom不是实际内存拷贝，不耗时
         ByteString byteString = ByteString.copyFrom(recognizeTask.getOriginBytes());
         RecognizeRequest recognizeRequest = RecognizeRequest.newBuilder().setBitmapData(byteString).build();
 
