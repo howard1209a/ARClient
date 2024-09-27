@@ -20,6 +20,8 @@ import com.narc.arclient.entity.Rectangle;
 import com.narc.arclient.entity.RenderData;
 import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.process.ProcessorManager;
+import com.narc.arclient.process.PytorchModel;
+import com.narc.arclient.process.TFLiteModel;
 import com.narc.arclient.process.processor.LogRemoteProcessor;
 import com.narc.arclient.process.processor.RecognizeProcessor;
 import com.narc.arclient.process.processor.RenderProcessor;
@@ -34,6 +36,9 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        TFLiteModel.Init(getAssets());
+        PytorchModel.Init(getAssets(),getCacheDir(),getFilesDir());
 
         RenderProcessor.init(this);
         RecognizeProcessor.init(this);
