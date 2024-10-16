@@ -41,7 +41,33 @@ public class PytorchModel {
         Module model2 = Module.load(path2);
 
         // 加载图像
-        Bitmap bitmap = loadImageFromAssets("bus_preprocessed.jpg");
+//        Bitmap bitmap = loadImageFromAssets("img1.jpg");
+
+        String fileName = "img1.jpg";
+        InputStream is = null;
+        try {
+            is = assetManager.open(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap = BitmapFactory.decodeStream(is);
+        // 确保输入Bitmap为640x640，若需要则添加调整逻辑
+        float[] inputArray = new float[640 * 640 * 3]; // RGB
+
+        for (int y = 0; y < 640; y++) {
+            for (int x = 0; x < 640; x++) {
+                int pixel = bitmap.getPixel(x, y);
+//                inputArray[y * 640 * 3 + x * 3 + 0] = ((pixel >> 16) & 0xff) / 255.0f; // R
+//                inputArray[y * 640 * 3 + x * 3 + 1] = ((pixel >> 8) & 0xff) / 255.0f;  // G
+//                inputArray[y * 640 * 3 + x * 3 + 2] = (pixel & 0xff) / 255.0f;         // B
+
+                inputArray[0 * 640 * 640 + y * 640 + x] = ((pixel >> 16) & 0xff) / 255.0f; // R
+                inputArray[1 * 640 * 640 + y * 640 + x] = ((pixel >> 8) & 0xff) / 255.0f;  // G
+                inputArray[2 * 640 * 640 + y * 640 + x] = (pixel & 0xff) / 255.0f;         // B
+            }
+        }
+
+        Tensor tensor = Tensor.fromBlob(inputArray, new long[]{1, 3, 640, 640});// CHW格式
 
         // 预处理图像并转换为Tensor
         Tensor inputTensor = preprocessBitmap(bitmap);

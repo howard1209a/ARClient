@@ -2,8 +2,7 @@ package com.narc.arclient;
 
 import static com.narc.arclient.enums.ProcessorEnums.DETECT_BOX_SIZE_SCALE;
 
-import android.content.Context;
-import android.os.BatteryManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
 import com.narc.arclient.camera.ICameraManager;
@@ -21,14 +21,19 @@ import com.narc.arclient.entity.RenderData;
 import com.narc.arclient.enums.TaskType;
 import com.narc.arclient.process.ProcessorManager;
 import com.narc.arclient.process.PytorchModel;
-import com.narc.arclient.process.TFLiteModel;
 import com.narc.arclient.process.processor.LogRemoteProcessor;
 import com.narc.arclient.process.processor.RecognizeProcessor;
 import com.narc.arclient.process.processor.RenderProcessor;
 import com.rayneo.arsdk.android.ui.activity.BaseMirrorActivity;
+import com.rayneo.arsdk.android.util.FLogger;
+import com.rayneo.arsdk.android.touch.TempleAction;
+import com.rayneo.arsdk.android.touch.TempleActionViewModel;
 
 import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
 import kotlin.jvm.functions.Function1;
+import kotlinx.coroutines.flow.FlowCollector;
 
 
 public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
@@ -36,16 +41,22 @@ public class MainActivity extends BaseMirrorActivity<ActivityMainBinding> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        initEvent();
+//        Intent intent = new Intent(MainActivity.this, DialogActivity.class);
+//        startActivity(intent);
 
-        TFLiteModel.Init(getAssets());
-        PytorchModel.Init(getAssets(),getCacheDir(),getFilesDir());
 
-        RenderProcessor.init(this);
-        RecognizeProcessor.init(this);
-        ProcessorManager.init(this);
-
-        ICameraManager.init(this);
+//        super.onCreate(savedInstanceState);
+//
+//        PytorchModel.Init(getAssets(), getCacheDir(), getFilesDir());
+//
+//        RenderProcessor.init(this);
+//        RecognizeProcessor.init(this);
+//        ProcessorManager.init(this);
+//
+//        ICameraManager.init(this);
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
